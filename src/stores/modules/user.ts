@@ -1,35 +1,30 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import axios from 'axios'
-export const useNumStore = defineStore(
-  'num',
+import { userInfoGetService } from '@/api/user'
+export const userInfoStore = defineStore(
+  'starformUser',
   () => {
     //身份信息
     const userInfo = ref()
-    const getUserInfo = async (id: number) => {
-      const res = await axios.post('http://47.109.186.26:3008/users/getUserInfo', {
-        user_id: id
-      })
+    const getUserInfo = async (username: any) => {
+      const res = await userInfoGetService({ username })
       userInfo.value = res.data.data
     }
     const clearUserInfo = () => {
       userInfo.value = null
     }
-    //主题颜色
-    const curTheme = ref('#55c9c9')
-    const isDark = ref(false)
-    const num = ref(9)
-    const changeNum = () => {
-      num.value++
+    //token
+    const token = ref()
+    const setToken = (t: string) => {
+      token.value = t
     }
+
     return {
-      num,
-      changeNum,
       userInfo,
-      curTheme,
-      isDark,
+      token,
       getUserInfo,
-      clearUserInfo
+      clearUserInfo,
+      setToken
     }
   },
   {
