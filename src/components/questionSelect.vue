@@ -92,7 +92,7 @@ const sendSelectInfo = (val: any) => {
       type: '多选题',
       title: '多选题默认标题',
       options: ['选项1', '选项2', '选项3'],
-      value: null
+      value: undefined
     }
   }
   if (val === '评分题') {

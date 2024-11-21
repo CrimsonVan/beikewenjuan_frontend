@@ -17,6 +17,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "axios": "^1.7.7",
+    "echarts": "^5.5.1",
     "element-plus": "^2.8.6",
     "pinia": "^2.2.4",
     "pinia-plugin-persistedstate": "^4.1.2",
@@ -24,7 +25,9 @@
     "unplugin-auto-import": "^0.18.3",
     "unplugin-vue-components": "^0.27.4",
     "vue": "^3.5.12",
-    "vue-router": "^4.4.5"
+    "vue-clipboard3": "^2.0.0",
+    "vue-router": "^4.4.5",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",

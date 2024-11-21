@@ -1,34 +1,63 @@
 <template>
+  <!-- 我的问卷 -->
   <div class="all-form">
     <div class="all-form-header">
       <div class="all-form-title">问卷列表</div>
       <el-input placeholder="请输入问卷吗进行搜索" :prefix-icon="Search" />
     </div>
-    <div class="all-form-item" v-for="item in 10" :key="item">
+    <!-- 问卷列表 -->
+    <div class="all-form-item" v-for="item in formList" :key="item.id">
       <div class="form-item-top">
-        <div class="item-top-title">前端调研报告</div>
+        <div class="item-top-title">{{ item.form_name }}</div>
         <div class="item-top-date">
-          <span class="date-item">ID:2329016851</span>
-          <span class="date-item">已发布</span>
-          <span class="date-item">答卷:0</span>
-          <span class="date-item">11月18日 13:20</span>
+          <span class="date-item">ID:232901685{{ item.id }}</span>
+          <span
+            class="date-item"
+            :style="item.status === '未发布' ? { color: '#6e6e6e' } : { color: '#627ce5' }"
+            >{{ item.status }}</span
+          >
+          <span class="date-item">答卷:{{ item.res_count }}</span>
+          <span class="date-item">{{ item.pub_time }}</span>
         </div>
       </div>
       <div class="form-item-bottom">
-        <div class="item-bottom-left">
+        <div
+          v-if="item.status === '未发布'"
+          @click="goEdit(item.id, item.form_name)"
+          class="item-bottom-left"
+        >
           <el-icon><Management /></el-icon><span>编辑问卷</span>
         </div>
-        <div class="item-bottom-left">
-          <el-icon><Promotion /></el-icon><span>发送问卷</span>
+        <div
+          v-else
+          class="item-bottom-left"
+          @click="router.push(`/preview?id=${item.id}&type=预览`)"
+        >
+          <el-icon><Management /></el-icon><span>预览问卷</span>
         </div>
-        <div class="item-bottom-left">
-          <el-icon><Platform /></el-icon><span>设计下载</span>
+        <div @click="goData(item.id, item.status, item.form_name)" class="item-bottom-left">
+          <el-icon :style="item.status === '未发布' ? { color: '#ccc' } : { color: '#627ce5' }"
+            ><TrendCharts /></el-icon
+          ><span :style="item.status === '未发布' ? { color: '#ccc' } : { color: '#6e6e6e' }"
+            >数据统计</span
+          >
         </div>
-        <div v-if="true" class="item-bottom-middle">
+        <div
+          v-if="item.status === '未发布'"
+          @click="updateStatus(item.id, item.form_name, '已发布')"
+          class="item-bottom-middle"
+        >
           <el-icon><CirclePlusFilled /></el-icon><span>发布</span>
         </div>
-        <div v-else class="item-bottom-middle">
+        <div
+          v-if="item.status === '已发布'"
+          @click="updateStatus(item.id, item.form_name, '已完成')"
+          class="item-bottom-middle"
+        >
           <el-icon><RemoveFilled /></el-icon><span>停止</span>
+        </div>
+        <div v-if="item.status === '已完成'" class="item-bottom-middle">
+          <el-icon><SuccessFilled /></el-icon><span>完成</span>
         </div>
         <div class="item-bottom-end">
           <el-icon><DocumentCopy /></el-icon><span>复制</span>
@@ -50,15 +79,43 @@
 import {
   Search,
   Management,
-  Promotion,
-  Platform,
   CirclePlusFilled,
   DocumentCopy,
   Delete,
   FolderOpened,
   Bell,
-  RemoveFilled
+  RemoveFilled,
+  TrendCharts,
+  SuccessFilled
 } from '@element-plus/icons-vue'
+import { ref, onMounted } from 'vue'
+import { formGetService } from '@/api/form'
+import { userInfoStore } from '@/stores'
+import { useRouter } from 'vue-router'
+import { formUpdateStatusService } from '@/api/form'
+const router = useRouter()
+const userstore = userInfoStore()
+const formList = ref<any>()
+const goEdit = (id: any, form_name: any) => {
+  router.push(`/edit?title=${form_name}&id=${id}`)
+}
+const goData = (id: any, status: any, form_name: any) => {
+  if (status === '已发布' || status === '已完成') {
+    router.push(`/data?id=${id}&form_name=${form_name}`)
+  }
+}
+const updateStatus = async (id: any, form_name: any, status: any) => {
+  let res = await formUpdateStatusService({ status: status, id: id })
+  if (res.data.message === '修改发布状态成功') {
+    console.log('修改状态成功')
+    router.push(`/data?id=${id}&form_name=${form_name}`)
+  }
+}
+onMounted(async () => {
+  let res = await formGetService({ username: userstore.userInfo.username })
+  formList.value = res.data.data
+  console.log('打印问卷列表', formList.value)
+})
 </script>
 <style lang="scss" scoped>
 .all-form {
@@ -130,27 +187,20 @@ import {
         display: flex;
         align-items: center;
         cursor: pointer;
+
         .el-icon {
           font-size: 20px;
           margin-right: 2px;
           color: #4b97ce;
         }
-        &:hover {
-          color: var(--el-color-primary);
-        }
         &:nth-child(1) {
           margin-left: 0px;
         }
-        &:nth-child(2) {
-          .el-icon {
-            color: #f59917;
-          }
-        }
-        &:nth-child(3) {
-          .el-icon {
-            color: #627ce5;
-          }
-        }
+      }
+      .form-link {
+        width: 100%;
+        height: 40px;
+        background-color: palegoldenrod;
       }
       .item-bottom-middle {
         font-size: 12px;
@@ -163,6 +213,7 @@ import {
         .el-icon {
           font-size: 24px;
           color: #333333;
+          color: var(--el-color-primary);
           margin-right: 3px;
         }
         &:hover {

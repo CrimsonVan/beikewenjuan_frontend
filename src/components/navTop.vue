@@ -1,6 +1,7 @@
 <template>
   <div class="apptitle">问卷星</div>
   <div class="headerRight">
+    <span @click="() => router.push('/vippay')" class="vip-btn">升级VIP</span>
     <div class="user_name">管理员</div>
     <img class="img" :src="userStore.userInfo.avatar" alt="" />
     <div @click="logout" class="user_name">退出</div>
@@ -38,7 +39,7 @@ const logout = () => {
   padding-left: 50px;
 }
 .headerRight {
-  min-width: 140px;
+  min-width: 210px;
   margin-left: auto;
   margin-right: 18px;
   height: 100%;
@@ -48,6 +49,10 @@ const logout = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  .vip-btn {
+    font-size: 14px;
+    color: #f6bf83;
+  }
   .img {
     width: 32px;
     height: 32px;

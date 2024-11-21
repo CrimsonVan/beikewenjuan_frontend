@@ -54,6 +54,7 @@
 <script lang="ts" setup>
 import { ref, defineExpose } from 'vue'
 import { CirclePlusFilled, RemoveFilled } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 const editVal = ref<any>({
   type: null,
   title: null,
@@ -62,7 +63,11 @@ const editVal = ref<any>({
 const addSelectOption = (index: any) => {
   console.log('打印index', index)
   if (editVal.value.options.length >= 7) {
-    console.log('选项最多7个')
+    console.log('')
+    ElMessage({
+      type: 'warning',
+      message: '选项最多7个'
+    })
     return
   }
   editVal.value.options.splice(index + 1, 0, '默认选项')
@@ -70,7 +75,10 @@ const addSelectOption = (index: any) => {
 const delSelectOption = (index: any) => {
   console.log('打印index', index)
   if (editVal.value.options.length <= 2) {
-    console.log('选项至少2个')
+    ElMessage({
+      type: 'warning',
+      message: '选项至少2个'
+    })
     return
   }
   editVal.value.options.splice(index, 1)

@@ -15,6 +15,14 @@ const router = createRouter({
         {
           path: '/home',
           component: () => import('../views/layout/home/index.vue')
+        },
+        {
+          path: '/delete',
+          component: () => import('../views/layout/delet/index.vue')
+        },
+        {
+          path: '/folder',
+          component: () => import('../views/layout/folder/index.vue')
         }
       ]
     },
@@ -27,6 +35,21 @@ const router = createRouter({
       path: '/edit',
       component: () => import('../views/edit/index.vue'),
       name: 'edit'
+    },
+    {
+      path: '/data',
+      component: () => import('../views/data/index.vue'),
+      name: 'data'
+    },
+    {
+      path: '/preview',
+      component: () => import('../views/preview/index.vue'),
+      name: 'preview'
+    },
+    {
+      path: '/vippay',
+      component: () => import('../views/vippay/index.vue'),
+      name: 'vippay'
     },
     {
       path: '/login',

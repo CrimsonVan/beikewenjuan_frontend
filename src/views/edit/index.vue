@@ -6,11 +6,15 @@
         <el-icon><ArrowLeft /></el-icon><span>返回</span>
       </div>
       <div class="title">
-        <span>{{ route.query.title }}</span>
-        <el-icon><Edit /></el-icon>
+        <span v-if="!showChangeName">{{ form_name }}</span>
+        <el-input ref="inpRef" @blur="() => (showChangeName = false)" v-else v-model="form_name" />
+        <el-icon @click="editHeader"><Edit /></el-icon>
       </div>
-      <el-button class="save">保存</el-button>
+      <el-button class="save" @click="saveForm">保存</el-button>
       <el-button class="pub" type="primary">发布</el-button>
+      <el-button class="pub" type="warning" @click="router.push(`/preview?id=${form_id}&type=预览`)"
+        >预览</el-button
+      >
     </el-header>
     <el-container>
       <!-- 左侧边 -->
@@ -35,9 +39,8 @@
           <div class="form-area">
             <!-- 问卷标题 -->
             <div class="form-top">
-              <div class="form-top-title">{{ route.query.title }}</div>
+              <div class="form-top-title">{{ form_name }}</div>
               <div class="form-top-desc">请根据实际情况填写</div>
-              <!-- <div class="ques-hover">edit</div> -->
             </div>
             <!-- 问卷题目 -->
             <questionOption
@@ -48,6 +51,7 @@
               :isEdit="true"
               @sendIndex="(index) => openEditOption(index)"
               @sendDelIndex="(index) => deleteOption(index)"
+              @sendVal="(index, val) => changeVal(index, val)"
             >
             </questionOption>
           </div>
@@ -69,73 +73,143 @@
 </template>
 <script lang="ts" setup>
 import { useRoute, useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { onMounted, ref, nextTick } from 'vue'
 import { Edit, Menu, ArrowLeft } from '@element-plus/icons-vue'
 import questionOption from '@/components/questionOption.vue'
 import questionEdit from '@/components/questionEdit.vue'
 import questionSelect from '@/components/questionSelect.vue'
+import { formAddService, formGetOneService, formUpdateOneService } from '@/api/form'
+import { userInfoStore } from '@/stores'
+import { ElMessage } from 'element-plus'
+const userStore = userInfoStore()
 const route = useRoute()
 const router = useRouter()
+const showChangeName = ref<any>(false)
 const questionEditRef = ref<any>(null)
 const compList = ref<any>(['文本显示', '用户输入', '用户选择'])
-const questionList = ref([
-  {
-    type: '填空',
-    title: '您的姓名',
-    value: null
-  },
-  {
-    type: '填空',
-    title: '您的联系方式',
-    value: null
-  },
-  {
-    type: '单选题',
-    title: '你的工作年限',
-    options: ['应届生', '1-3年', '3-5年', '5-10年'],
-    value: null
-  },
-  {
-    type: '单选题',
-    title: '你期望的薪资范围',
-    options: ['小于10k', '10k-15k', '大于15k'],
-    value: null
-  },
-  {
-    type: '多选题',
-    title: '你熟悉的技术栈',
-    options: ['Vue2', 'Vue3', 'React', 'Jquery'],
-    value: null
-  },
-  {
-    type: '评分题',
-    title: '你对公司的评价',
-    value: null
-  },
-  {
-    type: '日期题',
-    title: '你的生日是',
-    value: null
-  },
-  {
-    type: '简答题',
-    title: '备注信息',
-    value: null
-  }
-])
+// const questionList = ref([
+//   {
+//     type: '填空',
+//     title: '您的姓名',
+//     value: null
+//   },
+//   {
+//     type: '填空',
+//     title: '您的联系方式',
+//     value: null
+//   },
+//   {
+//     type: '单选题',
+//     title: '你的工作年限',
+//     options: ['应届生', '1-3年', '3-5年', '5-10年'],
+//     value: null
+//   },
+//   {
+//     type: '单选题',
+//     title: '你期望的薪资范围',
+//     options: ['小于10k', '10k-15k', '大于15k'],
+//     value: null
+//   },
+//   {
+//     type: '多选题',
+//     title: '你熟悉的技术栈',
+//     options: ['Vue2', 'Vue3', 'React', 'Jquery'],
+//     value: null
+//   },
+//   {
+//     type: '评分题',
+//     title: '你对公司的评价',
+//     value: null
+//   },
+//   {
+//     type: '日期题',
+//     title: '你的生日是',
+//     value: null
+//   },
+//   {
+//     type: '简答题',
+//     title: '备注信息',
+//     value: null
+//   }
+// ])
 //打开编辑选项区域
+const questionList = ref<any>([])
+const form_name = ref<any>() //问卷名字
+const form_id = ref<any>() //问卷id
+const inpRef = ref<any>(null)
 const openEditOption = (index: any) => {
   questionEditRef.value.open(questionList.value[index])
 }
+//修改问卷标题
+const editHeader = () => {
+  showChangeName.value = true
+  nextTick(() => {
+    inpRef.value.focus()
+  })
+}
+//删除问卷问题
 const deleteOption = (index: any) => {
   console.log('打印要删除的index', index)
   questionList.value.splice(index, 1)
 }
 //添加问卷问题
 const addOption = (val: any) => {
-  console.log('已确认添加', val)
+  // console.log('已确认添加', val)
   questionList.value.push(val)
+  console.log('打印添加完的问卷', questionList.value)
 }
+
+//保存问卷
+const saveForm = async () => {
+  if (route.query.id) {
+    //编辑问卷
+    let res = await formUpdateOneService({
+      questionList: questionList.value,
+      form_name: form_name.value,
+      id: form_id.value
+    })
+    console.log('打印问卷修改后', res.data)
+    if (res.data.message === '修改问卷成功') {
+      ElMessage({
+        type: 'success',
+        message: '保存成功'
+      })
+    }
+  } else {
+    //新增问卷
+    let res = await formAddService({
+      username: userStore.userInfo.username,
+      avatar: userStore.userInfo.avatar,
+      nick_name: userStore.userInfo.nick_name,
+      form_name: route.query.title,
+      status: '未发布',
+      questionList: questionList.value
+    })
+    console.log('打印新增问卷结果', res.data)
+    if (res.data.message === '新增问卷成功') {
+      ElMessage({
+        type: 'success',
+        message: '保存成功'
+      })
+    }
+  }
+}
+//修改问卷
+const changeVal = async (index: any, val: any) => {
+  console.log('打印修改的值', index, val)
+}
+onMounted(async () => {
+  if (route.query.id) {
+    let res = await formGetOneService({ id: route.query.id })
+    console.log('打印获取单个问卷', res.data.data)
+    questionList.value = res.data.data[0].questionList
+    form_name.value = res.data.data[0].form_name
+    form_id.value = res.data.data[0].id
+  } else {
+    console.log('this is add')
+    form_name.value = route.query.title
+  }
+})
 </script>
 <style lang="scss" scoped>
 .el-container-demo {

@@ -5,7 +5,7 @@
       {{ (index as any) + 1 }}.
       {{ detail?.title }}
     </div>
-    <el-input class="ques-inp" v-model="value" placeholder="Please input" />
+    <el-input class="ques-inp" v-model="detail.value" placeholder="Please input" />
 
     <div class="ques-hover" v-if="isEdit">
       <el-icon><Top /></el-icon>
@@ -22,12 +22,13 @@
     <el-input
       class="ques-long-inp"
       type="textarea"
-      v-model="value"
+      v-model="detail.value"
       :autosize="{ minRows: 3, maxRows: 3 }"
       placeholder="Please input"
       show-word-limit
       maxlength="110"
     />
+
     <div class="ques-hover" v-if="isEdit">
       <el-icon><Top /></el-icon>
       <el-icon><Bottom /></el-icon>
@@ -40,7 +41,7 @@
   <!-- 问卷单选项目 -->
   <div class="question-item" v-if="detail?.type === '单选题'">
     <div class="ques-name">{{ (index as any) + 1 }}.{{ detail?.title }}</div>
-    <el-radio-group class="ques-select-one" v-model="value">
+    <el-radio-group class="ques-select-one" v-model="detail.value">
       <el-radio v-for="(option, index) in detail?.options" :key="index" :value="option">{{
         option
       }}</el-radio>
@@ -57,7 +58,7 @@
   <!-- 问卷多选项目 -->
   <div class="question-item" v-if="detail?.type === '多选题'">
     <div class="ques-name">{{ (index as any) + 1 }}.{{ detail?.title }}</div>
-    <el-checkbox-group class="ques-select-more" v-model="value">
+    <el-checkbox-group class="ques-select-more" v-model="detail.value">
       <el-checkbox
         v-for="(option, index) in detail?.options"
         :key="index"
@@ -79,7 +80,13 @@
   <!-- 评分问题 -->
   <div class="question-item" v-if="detail?.type === '评分题'">
     <div class="ques-name">{{ (index as any) + 1 }}.{{ detail?.title }}</div>
-    <el-rate class="ques-rate" v-model="value" show-score text-color="#333333" :colors="colors" />
+    <el-rate
+      class="ques-rate"
+      v-model="detail.value"
+      show-score
+      text-color="#333333"
+      :colors="colors"
+    />
     <div class="ques-hover" v-if="isEdit">
       <el-icon><Top /></el-icon>
       <el-icon><Bottom /></el-icon>
@@ -93,7 +100,7 @@
   <div class="question-item" v-if="detail?.type === '日期题'">
     <div class="ques-name">{{ (index as any) + 1 }}.{{ detail?.title }}</div>
     <el-date-picker
-      v-model="value"
+      v-model="detail.value"
       class="ques-date"
       type="date"
       placeholder="Pick a Date"
@@ -112,7 +119,6 @@
 import { Edit, Delete, Top, Bottom } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 const colors = ref(['#99A9BF', '#F7BA2A', '#FF9900'])
-const value = ref() //问题答复内容
 defineProps({
   detail: {
     type: Object
@@ -124,15 +130,7 @@ defineProps({
     type: Boolean
   }
 })
-const emit = defineEmits(['sendIndex', 'sendDelIndex'])
-// const delOption = (index: any) => {
-//   console.log('打印index', index)
-//   if (editVal.value[] <= 2) {
-//     console.log('选项至少2个')
-//     return
-//   }
-//   editVal.value.options.splice(index, 1)
-// }
+const emit = defineEmits(['sendIndex', 'sendDelIndex', 'sendVal'])
 </script>
 <style lang="scss" scoped>
 .question-item {

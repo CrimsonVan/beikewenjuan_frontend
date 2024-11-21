@@ -52,9 +52,10 @@
 </template>
 <script lang="ts" setup>
 import navTop from '@/components/navTop.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { resultGetService } from '@/api/result'
 const router = useRouter()
 const formTitle = ref('爱吃美食调查')
 const goEditForm = () => {
@@ -67,6 +68,10 @@ const goEditForm = () => {
   }
   router.push(`/edit?title=${formTitle.value}`)
 }
+onMounted(async () => {
+  let res = await resultGetService({ form_id: 2 })
+  console.log('打印最终', res.data.data)
+})
 </script>
 <style lang="scss" scoped>
 .el-container-demo {
