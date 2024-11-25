@@ -111,14 +111,14 @@ const submitForm = (formEl: FormInstance | undefined) => {
 .login {
   width: 100%;
   height: 100vh;
-  background-color: #333333;
+  background-color: var(--bg-color);
   display: flex;
   justify-content: center;
   align-items: center;
   .login-form {
     width: 480px;
     height: 80vh;
-    background-color: #ffffff;
+    background-color: var(--card-color);
     border-radius: 18px;
     display: flex;
     // justify-content: center;
@@ -147,6 +147,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
         align-items: center;
         width: fit-content;
         height: 100%;
+        color: var(--title-color);
         // background-color: pink;
         margin: 0 auto;
       }
@@ -161,7 +162,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
         width: 100%;
         height: 100%;
         font-size: 12px;
-        color: #333333;
+        color: var(--text-color);
         display: flex;
         justify-content: space-between;
         align-items: flex-start;

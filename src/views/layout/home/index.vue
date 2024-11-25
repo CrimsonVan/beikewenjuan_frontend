@@ -60,7 +60,7 @@
           <el-icon><SuccessFilled /></el-icon><span>完成</span>
         </div>
         <div class="item-bottom-end">
-          <el-icon><DocumentCopy /></el-icon><span>复制</span>
+          <el-icon><DocumentCopy /></el-icon><span @click="goCopyEdit(item)">复制</span>
         </div>
         <div class="item-bottom-end">
           <el-icon><Delete /></el-icon><span>删除</span>
@@ -93,9 +93,10 @@ import { formGetService } from '@/api/form'
 import { userInfoStore } from '@/stores'
 import { useRouter } from 'vue-router'
 import { formUpdateStatusService } from '@/api/form'
+import type { formDataResponse, formData } from '@/types/form'
 const router = useRouter()
 const userstore = userInfoStore()
-const formList = ref<any>()
+const formList = ref<formData[]>([]) //问卷列表
 const goEdit = (id: any, form_name: any) => {
   router.push(`/edit?title=${form_name}&id=${id}`)
 }
@@ -111,8 +112,12 @@ const updateStatus = async (id: any, form_name: any, status: any) => {
     router.push(`/data?id=${id}&form_name=${form_name}`)
   }
 }
+const goCopyEdit = (item: any) => {
+  router.push(`/edit?copyid=${item.id}&title=${item.form_name}`)
+}
+
 onMounted(async () => {
-  let res = await formGetService({ username: userstore.userInfo.username })
+  let res: formDataResponse = await formGetService({ username: userstore.userInfo.username })
   formList.value = res.data.data
   console.log('打印问卷列表', formList.value)
 })
@@ -129,7 +134,9 @@ onMounted(async () => {
     align-items: center;
     margin-bottom: 40px;
     .all-form-title {
-      color: black;
+      color: var(--title-color);
+      // color: #333333;
+
       font-weight: 600;
       font-size: 21px;
       display: flex;
@@ -144,28 +151,26 @@ onMounted(async () => {
   .all-form-item {
     width: 100%;
     height: 130px;
-    background-color: #fff;
+    background-color: var(--card-color);
     margin-bottom: 20px;
     padding: 12px 24px;
     .form-item-top {
       width: 100%;
       // background-color: salmon;
       height: 36px;
-      border-bottom: 1px solid #f5f5f5;
+      border-bottom: 1px solid var(--bg-color);
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       .item-top-title {
         font-size: 15px;
-        color: black;
-        cursor: pointer;
-        &:hover {
-          color: #4b97ce;
-        }
+        color: var(--title-color);
       }
       .item-top-date {
         font-size: 12px;
         // background-color: cornsilk;
+        color: var(--text-color);
+        // color: black;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -212,12 +217,14 @@ onMounted(async () => {
         cursor: pointer;
         .el-icon {
           font-size: 24px;
-          color: #333333;
+          color: var(--text-color);
           color: var(--el-color-primary);
           margin-right: 3px;
         }
         &:hover {
-          color: black;
+          // color: black;
+          color: var(--title-color);
+
           .el-icon {
             color: var(--el-color-primary);
           }
@@ -238,7 +245,7 @@ onMounted(async () => {
           color: #ccc;
         }
         &:hover {
-          color: black;
+          color: var(--title-color);
         }
       }
     }

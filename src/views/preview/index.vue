@@ -36,13 +36,14 @@ import questionOption from '@/components/questionOption.vue'
 import { ElMessage } from 'element-plus'
 import { resultAddService } from '@/api/result'
 import { getNowDate } from '@/utils/data'
+import type { formDataResponse, formData } from '@/types/form'
 const route = useRoute()
-const formDetail = ref<any>() //问卷信息
-const isBtnBan = ref<any>(false)
-const isFormBan = ref<any>(false)
+const formDetail = ref<formData>() //问卷信息
+const isBtnBan = ref<boolean>(false)
+const isFormBan = ref<boolean>(false)
 //是否完成填写
 const isFinish = () => {
-  let res = formDetail.value.questionList.some(
+  let res = formDetail.value?.questionList.some(
     (item: any) =>
       item.value === '' ||
       item.value === null ||
@@ -64,10 +65,10 @@ const submit = async () => {
     })
     return
   }
-  console.log('打印要提交的问卷', formDetail.value.questionList)
+  console.log('打印要提交的问卷', formDetail.value?.questionList)
   let res = await resultAddService({
     form_id: route.query.id,
-    resList: formDetail.value.questionList,
+    resList: formDetail.value?.questionList,
     pub_time: getNowDate()
   })
   console.log('打印新增问卷后的结果', res.data)
@@ -82,13 +83,14 @@ onMounted(async () => {
   if (route.query.type === '预览') {
     isBtnBan.value = true
   }
-  let res = await formGetOneService({ id: route.query.id })
+  let res: formDataResponse = await formGetOneService({ id: route.query.id })
   console.log('打印获取单个问卷', res.data.data)
   if (res.data.data[0].status === '已完成') {
     isBtnBan.value = true
     isFormBan.value = true
   }
   formDetail.value = res.data.data[0]
+  console.log('打印填写问卷页面', formDetail.value)
 })
 </script>
 <style lang="scss" scoped>

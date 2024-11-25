@@ -79,14 +79,17 @@ import questionOption from '@/components/questionOption.vue'
 import questionEdit from '@/components/questionEdit.vue'
 import questionSelect from '@/components/questionSelect.vue'
 import { formAddService, formGetOneService, formUpdateOneService } from '@/api/form'
+import { oneCopyGetService } from '@/api/copy'
 import { userInfoStore } from '@/stores'
 import { ElMessage } from 'element-plus'
+import type { formDataResponse, questionItem } from '@/types/form'
+import type { copyDataResponse } from '@/types/copy'
 const userStore = userInfoStore()
 const route = useRoute()
 const router = useRouter()
-const showChangeName = ref<any>(false)
+const showChangeName = ref<boolean>(false)
 const questionEditRef = ref<any>(null)
-const compList = ref<any>(['文本显示', '用户输入', '用户选择'])
+const compList = ref<string[]>(['文本显示', '用户输入', '用户选择'])
 // const questionList = ref([
 //   {
 //     type: '填空',
@@ -133,9 +136,9 @@ const compList = ref<any>(['文本显示', '用户输入', '用户选择'])
 //   }
 // ])
 //打开编辑选项区域
-const questionList = ref<any>([])
-const form_name = ref<any>() //问卷名字
-const form_id = ref<any>() //问卷id
+const questionList = ref<questionItem[]>([])
+const form_name = ref<string>() //问卷名字
+const form_id = ref<number>() //问卷id
 const inpRef = ref<any>(null)
 const openEditOption = (index: any) => {
   questionEditRef.value.open(questionList.value[index])
@@ -181,7 +184,7 @@ const saveForm = async () => {
       username: userStore.userInfo.username,
       avatar: userStore.userInfo.avatar,
       nick_name: userStore.userInfo.nick_name,
-      form_name: route.query.title,
+      form_name: form_name.value,
       status: '未发布',
       questionList: questionList.value
     })
@@ -200,14 +203,22 @@ const changeVal = async (index: any, val: any) => {
 }
 onMounted(async () => {
   if (route.query.id) {
-    let res = await formGetOneService({ id: route.query.id })
+    let res: formDataResponse = await formGetOneService({ id: route.query.id })
     console.log('打印获取单个问卷', res.data.data)
     questionList.value = res.data.data[0].questionList
     form_name.value = res.data.data[0].form_name
     form_id.value = res.data.data[0].id
   } else {
-    console.log('this is add')
-    form_name.value = route.query.title
+    if (route.query.copyid) {
+      let res: copyDataResponse = await oneCopyGetService({ id: route.query.copyid })
+      console.log('打印获取单个问卷模板', res.data.data)
+      questionList.value = res.data.data[0].copyList
+      form_name.value = res.data.data[0].copy_name
+      form_id.value = res.data.data[0].id
+    } else {
+      console.log('this is add')
+      form_name.value = route.query.title as string
+    }
   }
 })
 </script>
@@ -216,7 +227,7 @@ onMounted(async () => {
   height: 100vh;
   width: 100%;
   .el-header {
-    background-color: var(--el-bg-color);
+    background-color: var(--card-color);
     height: 7vh;
     padding: 14px 30px;
     display: flex;
@@ -235,7 +246,7 @@ onMounted(async () => {
     .title {
       margin-left: 20px;
       //   background-color: cornsilk;
-      color: #333333;
+      color: var(--title-color);
       font-weight: 600;
       font-size: 17px;
       display: flex;
@@ -263,11 +274,11 @@ onMounted(async () => {
   }
   .el-aside {
     height: 93vh;
-    background-color: #f7f7f7;
+    background-color: var(--bg-color);
     padding: 20px;
     .edit-area {
       width: 100%;
-      background-color: #ffffff;
+      background-color: var(--card-color);
       height: 100%;
       .edit-area-header {
         width: 100%;
@@ -276,7 +287,7 @@ onMounted(async () => {
         color: #0095ff;
         font-weight: 600;
         display: flex;
-        border-bottom: 1px solid #f5f5f5;
+        border-bottom: 1px solid var(--bg-color);
         align-items: center;
         .el-icon {
           margin-top: 3px;
@@ -290,7 +301,7 @@ onMounted(async () => {
     }
     .comp-area {
       width: 100%;
-      background-color: #fff;
+      background-color: var(--card-color);
       height: 100%;
       .comp-area-header {
         width: 100%;
@@ -299,7 +310,7 @@ onMounted(async () => {
         color: #0095ff;
         font-weight: 600;
         display: flex;
-        border-bottom: 1px solid #f5f5f5;
+        border-bottom: 1px solid var(--bg-color);
         align-items: center;
         .el-icon {
           margin-top: 3px;
@@ -322,13 +333,13 @@ onMounted(async () => {
     height: 93vh;
     width: 100%;
     .main {
-      background-color: #f7f7f7;
+      background-color: var(--bg-color);
       width: 100%;
       height: 100%;
       .form-area {
         width: 40%;
         min-height: 650px;
-        background-color: #ffffff;
+        background-color: var(--card-color);
         margin: 40px auto 30px;
         padding: 10px;
         .form-top {
@@ -342,13 +353,14 @@ onMounted(async () => {
             width: 100%;
             text-align: center;
             font-weight: 600;
+            color: var(--title-color);
             font-size: 24px;
             margin-top: 10px;
           }
           .form-top-desc {
             width: 100%;
             text-align: center;
-            color: black;
+            color: var(--text-color);
             font-size: 14px;
             margin-top: 16px;
           }

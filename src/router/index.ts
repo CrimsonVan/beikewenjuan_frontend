@@ -52,6 +52,11 @@ const router = createRouter({
       name: 'vippay'
     },
     {
+      path: '/paysuccess',
+      component: () => import('../views/paysuccess/index.vue'),
+      name: 'paysuccess'
+    },
+    {
       path: '/login',
       component: () => import('../views/login/index.vue'),
       name: 'login'

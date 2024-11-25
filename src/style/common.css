@@ -1,0 +1,19 @@
+*{  
+    /* 白天 */
+    /* 背景色 */
+    --bg-color:#f7f7f7;
+    /* 卡片颜色 */
+    --card-color:#ffffff;
+    /* 文字颜色 */
+    --text-color:#333333;
+    /* 标题颜色 */
+    --title-color:black;
+    /* 导航active颜色 */
+    --active-nav-color:#ededed;
+    /* input的颜色 */
+    --el-fill-color-blank:#ffffff;
+    /* 表格主题颜色 */
+    --el-bg-color:#ffffff;
+
+
+}

@@ -9,7 +9,7 @@
       <!-- 主要内容 -->
       <el-main>
         <el-scrollbar class="main">
-          <div class="header">白金会员</div>
+          <div class="header">会员列表</div>
           <div class="vip">
             <div class="vips">
               <div
@@ -27,7 +27,7 @@
             </div>
 
             <div class="vip-tip">开通连续包年,会员到期按照264/年自动续费，可随时取消</div>
-            <div class="alipay">
+            <!-- <div class="alipay">
               <div class="alipay-title">支付方式：扫码支付</div>
               <img class="qrcode" @click="goSandboxPay" src="../../assets/二维码 (2).png" alt="" />
               <div class="pay-info">
@@ -42,7 +42,20 @@
                   <span class="pay-law">《会员协议》《自动续费规则》</span>
                 </div>
               </div>
+            </div> -->
+          </div>
+          <div class="header">选择支付方式</div>
+          <div class="pay-method">
+            <div
+              class="pay-method-item"
+              :class="[selected ? 'active' : '']"
+              @click="() => (selected = true)"
+            >
+              <img class="img" src="../../assets/支付宝.png" alt="" /><span>支付宝支付</span>
             </div>
+          </div>
+          <div class="pay-btn">
+            <el-button class="btn" :disabled="!selected" @click="goSandboxPay">确认支付</el-button>
           </div>
         </el-scrollbar>
       </el-main>
@@ -81,6 +94,7 @@ const goPay = (index: any) => {
   activeIndex.value = index
   curVip.value = vipType[index]
 }
+const selected = ref(false)
 //测试支付宝沙盒功能
 const goSandboxPay = async () => {
   let randomOreder = Math.floor(Math.random() * 999)
@@ -88,6 +102,8 @@ const goSandboxPay = async () => {
     age: randomOreder,
     totalAmount: curVip.value.price
   })
+  console.log('打印result', res.data.result)
+
   window.location.href = res.data.result
 }
 </script>
@@ -97,10 +113,10 @@ const goSandboxPay = async () => {
   width: 100%;
   .el-header {
     padding: 0;
-    background-color: var(--el-bg-color);
+    background-color: var(--card-color);
     display: flex;
     height: 8vh;
-    border-bottom: 1px solid var(--el-border-color-lighter);
+    // border-bottom: 1px solid var(--el-border-color-lighter);
   }
 
   .el-main {
@@ -108,19 +124,21 @@ const goSandboxPay = async () => {
     height: 92vh;
     width: 100%;
     .main {
-      background-color: #f7f7f7;
+      background-color: var(--bg-color);
       width: 100%;
       height: 100%;
       .header {
-        text-align: center;
-        font-size: 24px;
+        // text-align: center;
+        font-size: 20px;
         font-weight: 600;
         margin-top: 30px;
+        padding: 0 200px;
+        color: var(--title-color);
       }
       .vip {
         // min-height: 400px;
         // background-color: pink;
-        margin: 40px auto;
+        margin: 20px auto;
         display: flex;
         justify-content: space-between;
         padding: 0 200px;
@@ -134,7 +152,7 @@ const goSandboxPay = async () => {
           .vip-item {
             width: 250px;
             height: 165px;
-            background-color: #fff;
+            background-color: var(--card-color);
             border-radius: 14px;
             color: #333333;
             display: flex;
@@ -167,7 +185,6 @@ const goSandboxPay = async () => {
               height: 35px;
               width: 100%;
               color: #522a19;
-              background-color: #faf1e5;
               display: flex;
               justify-content: center;
               align-items: center;
@@ -194,7 +211,7 @@ const goSandboxPay = async () => {
           width: 800px;
           height: 250px;
           border-radius: 14px;
-          background-color: #ffffff;
+          background-color: var(--card-color);
           padding: 20px 15px;
           border: 1px solid #ccc;
           display: flex;
@@ -234,13 +251,13 @@ const goSandboxPay = async () => {
             }
             .pay-way1 {
               font-size: 14px;
-              color: #333333;
+              color: var(--text-color);
               margin-top: 20px;
               //   background-color: palegoldenrod;
             }
             .pay-way2 {
               font-size: 14px;
-              color: #333333;
+              color: var(--text-color);
               margin-top: 5px;
               //   background-color: palegoldenrod;
             }
@@ -249,10 +266,53 @@ const goSandboxPay = async () => {
               font-size: 13px;
               margin-top: auto;
               .pay-law {
-                color: #333333;
+                color: var(--text-color);
               }
             }
           }
+        }
+      }
+      .pay-method {
+        margin-top: 20px;
+        padding: 0 200px;
+        width: 100%;
+        height: 100px;
+        // background-color: cornsilk;
+        .pay-method-item {
+          width: 175px;
+          height: 65px;
+          background-color: var(--card-color);
+          border: 1px solid #ccc;
+          font-size: 17px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+          color: var(--title-color);
+          .img {
+            width: 23px;
+            height: 23px;
+            margin-right: 6px;
+          }
+          &.active {
+            border: 1.5px solid #dfc19d;
+            // .tip {
+            //   background-color: #f5e1c8;
+            // }
+          }
+        }
+      }
+      .pay-btn {
+        margin-top: 20px;
+        padding: 0 200px;
+        display: flex;
+        justify-content: flex-end;
+        .btn {
+          width: 120px;
+          height: 50px;
+          background-color: #fff1dd;
+          border: 1px solid #dfc19d;
+          color: #333333;
         }
       }
     }

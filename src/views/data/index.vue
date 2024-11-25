@@ -74,15 +74,7 @@
                 ref="echartRef"
               ></timeNum>
               <!-- 切换按钮 -->
-              <div
-                style="
-                  width: 100%;
-                  display: flex;
-                  background-color: #f7f7f7;
-                  justify-content: flex-end;
-                  padding: 10px 0px 10px;
-                "
-              >
+              <div class="change-style">
                 <el-radio-group
                   v-model="echartStatusArr[index]"
                   @change="(e: any) => changeStatus(e, index)"
@@ -111,15 +103,17 @@ import { copy } from '@/utils/copy'
 import timeNum from './component/timeNum.vue'
 import { getAbcd } from '@/utils/abcd'
 import { countBy } from '@/utils/countBy'
+import type { resultDataResponse, echartsData } from '@/types/result'
+import type { questionItem } from '@/types/form'
 import * as xls from 'xlsx'
 const router = useRouter()
 const route = useRoute()
-const resArr = ref<any>() //填写结果列表
-const newKeyArr = ref<any>([]) //问卷问题列表
-const echartsOptionList = ref<any>([]) //单选题或多选题的echarts的数据
-const link = ref(window.location.origin + `/starform#/preview?id=${route.query.id}`) //问卷填写链接
-const isEmpty = ref(false)
-const echartStatusArr = ref<any>([])
+const resArr = ref<any[]>([]) //填写结果列表
+const newKeyArr = ref<questionItem[]>([]) //问卷问题列表
+const echartsOptionList = ref<echartsData[]>([]) //单选题、多选题、评分题的echarts的数据
+const link = ref<string>(window.location.origin + `/starform#/preview?id=${route.query.id}`) //问卷填写链接
+const isEmpty = ref<boolean>(false)
+const echartStatusArr = ref<string[]>([])
 let echartRef = ref<any>(null)
 //改变echarts
 const changeStatus = (e: any, index: any) => {
@@ -134,11 +128,13 @@ const exportExcel = () => {
 }
 
 onMounted(async () => {
-  let res = await resultGetService({ form_id: route.query.id })
+  let res: resultDataResponse = await resultGetService({ form_id: route.query.id })
+  console.log('打印result的res', res.data.data)
+
   if (res.data.data) {
     newKeyArr.value = res.data.data.newKeyArr //答卷问题列表
     resArr.value = res.data.data.resArr //填写结果列表
-    let testCountList: any = []
+    // let testCountList: any = []
     newKeyArr.value.forEach((item: any) => {
       if (item.type === '单选题' || item.type === '多选题' || item.type === '评分题') {
         let obj = {
@@ -146,14 +142,16 @@ onMounted(async () => {
           type: item.type,
           echartsArr: countBy(resArr.value, (u: any) => u[item.title])
         }
-        testCountList.push(obj)
+        // testCountList.push(obj)
+        echartsOptionList.value.push(obj)
       }
     })
-    echartsOptionList.value = testCountList
-    for (let i = 0; i < testCountList.length; i++) {
+    // echartsOptionList.value = testCountList
+    console.log('echarts图表', echartsOptionList.value)
+
+    for (let i = 0; i < echartsOptionList.value.length; i++) {
       echartStatusArr.value.push('饼状图')
     }
-    console.log('测试countBy', testCountList)
   } else {
     console.log('暂无填写结果')
     isEmpty.value = true
@@ -165,7 +163,7 @@ onMounted(async () => {
   height: 100vh;
   width: 100%;
   .el-header {
-    background-color: var(--el-bg-color);
+    background-color: var(--card-color);
     height: 7vh;
     padding: 14px 30px;
     display: flex;
@@ -182,7 +180,7 @@ onMounted(async () => {
     }
     .title {
       margin-left: 20px;
-      color: #333333;
+      color: var(--title-color);
       font-weight: 600;
       font-size: 17px;
       display: flex;
@@ -192,7 +190,7 @@ onMounted(async () => {
     .num {
       margin-left: auto;
       margin-right: 20px;
-      color: #333333;
+      color: var(--title-color);
       font-weight: 600;
       font-size: 17px;
       display: flex;
@@ -215,7 +213,7 @@ onMounted(async () => {
     height: 93vh;
     width: 100%;
     .main {
-      background-color: #f7f7f7;
+      background-color: var(--bg-color);
       width: 100%;
       height: 100%;
       .data {
@@ -227,7 +225,7 @@ onMounted(async () => {
         .data-header {
           width: 100%;
           height: 50px;
-          background-color: #ffffff;
+          background-color: var(--card-color);
           line-height: 50px;
           font-weight: 600;
           font-size: 20px;
@@ -235,15 +233,16 @@ onMounted(async () => {
           justify-content: space-between;
           align-items: center;
           padding: 0 30px;
+          color: var(--title-color);
         }
         .data-show {
           width: 100%;
           margin-bottom: 20px;
           // height: 230px;
           overflow: hidden;
-          background-color: #fff;
+          background-color: var(--card-color);
           display: flex;
-          border: 1px solid #f7f7f7; // justify-content: flex-end;
+          border: 1px solid var(--bg-color); // justify-content: flex-end;
           // align-items: center;
           flex-wrap: wrap;
           .ques {
@@ -253,7 +252,7 @@ onMounted(async () => {
             .ques-header {
               font-size: 18px;
               font-weight: 600;
-              color: #333333;
+              color: var(--text-color);
               // background-color: pink;
               margin-bottom: 15px;
             }
@@ -266,11 +265,18 @@ onMounted(async () => {
               padding-left: 20px;
             }
           }
+          .change-style {
+            width: 100%;
+            display: flex;
+            background-color: var(--bg-color);
+            justify-content: flex-end;
+            padding: 10px 0px 10px;
+          }
         }
         .data-header2 {
           width: 100%;
           height: 50px;
-          background-color: #ffffff;
+          background-color: var(--card-color);
           line-height: 50px;
           font-weight: 600;
           font-size: 20px;
@@ -281,6 +287,7 @@ onMounted(async () => {
           justify-content: space-between;
           align-items: center;
           padding: 0 30px;
+          color: var(--title-color);
         }
       }
       .empty {
@@ -289,7 +296,7 @@ onMounted(async () => {
         height: 500px;
         padding: 10px 30px;
         border-radius: 16px;
-        background-color: #fff;
+        background-color: var(--card-color);
       }
     }
   }

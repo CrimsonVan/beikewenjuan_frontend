@@ -51,7 +51,6 @@
     <div @click="sendSelectInfo('日期题')" class="select-area" v-if="title === '用户选择'">
       <div class="select-area-title">日期标题</div>
       <el-date-picker
-        :disabled="true"
         class="select-date"
         type="date"
         placeholder="Pick a Date"
@@ -126,23 +125,23 @@ const sendSelectInfo = (val: any) => {
   cursor: pointer;
 
   .select-name {
-    color: black;
+    color: var(--title-color);
     font-size: 16px;
     font-weight: 600;
   }
   .select-area {
     width: 100%;
     min-height: 30px;
-    background-color: #f7f7f7;
+    background-color: var(--bg-color);
     margin-top: 10px;
     padding: 10px 8px;
     border-radius: 4px;
-    border: 1px solid #f7f7f7;
+    border: 1px solid var(--bg-color);
     &:hover {
       border: 1px solid #65a3e4;
     }
     .select-area-header {
-      color: black;
+      color: var(--title-color);
       font-size: 22px;
       font-weight: 600;
       text-align: center;
@@ -156,7 +155,7 @@ const sendSelectInfo = (val: any) => {
       text-align: center;
     }
     .select-area-title {
-      color: black;
+      color: var(--title-color);
       font-size: 14px;
       font-weight: 600;
     }

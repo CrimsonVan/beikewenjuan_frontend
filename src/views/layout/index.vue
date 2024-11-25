@@ -67,14 +67,14 @@ onMounted(() => {
   width: 100%;
   .el-header {
     padding: 0;
-    background-color: var(--el-bg-color);
+    background-color: var(--card-color);
     display: flex;
     height: 8vh;
-    border-bottom: 1px solid var(--el-border-color-lighter);
+    border-bottom: 1px solid #292828;
   }
   .el-aside {
     height: 92vh;
-    background-color: #f7f7f7;
+    background-color: var(--bg-color);
     padding-left: 50px;
     .create-btn {
       width: 100%;
@@ -101,12 +101,12 @@ onMounted(() => {
         font-weight: 600;
       }
       &:hover {
-        background-color: #ededed;
-        color: #1e1a1d;
+        background-color: var(--active-nav-color);
+        color: var(--text-color);
       }
       &.active {
-        background-color: #ededed;
-        color: #1e1a1d;
+        background-color: var(--active-nav-color);
+        color: var(--text-color);
       }
     }
   }
@@ -115,7 +115,7 @@ onMounted(() => {
     height: 92vh;
     width: 100%;
     .main {
-      background-color: #f7f7f7;
+      background-color: var(--bg-color);
       width: 100%;
       height: 100%;
     }

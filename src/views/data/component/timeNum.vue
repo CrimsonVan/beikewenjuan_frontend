@@ -39,6 +39,7 @@ const initChart = () => {
   chartInstance = echarts.getInstanceByDom(chartRef.value!)
 
   const circleOption = {
+    darkMode: 'auto',
     tooltip: {
       trigger: 'item'
     },
@@ -64,6 +65,7 @@ const initChart = () => {
     ]
   }
   const barOption = {
+    darkMode: 'auto',
     tooltip: {
       trigger: 'item'
     },
@@ -108,6 +110,8 @@ const initChart = () => {
     tooltip: {
       trigger: 'item'
     },
+
+    darkMode: 'auto',
     grid: {
       x: 50,
       y: 30,
@@ -145,7 +149,7 @@ const initChart = () => {
     barOption.series[0].data = newData?.map((item: any) => item.num)
     barOption.xAxis.data = newData?.map((item: any) => item.option)
 
-    chartInstance.setOption(barOption, true)
+    chartInstance.setOption(barOption, 'dark', true)
   }
   if (echartsType.value === '饼状图') {
     circleOption.series[0].data = newData?.map((item: any) => {

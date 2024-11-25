@@ -41,10 +41,55 @@
             <div class="copy-top">复制模板问卷</div>
             <el-scrollbar class="copy-scroll">
               <div class="copy-main">
-                <div v-for="item in 15" :key="item" class="copy-item">1</div>
+                <div v-for="(item, index) in copyArr" :key="item.id" class="copy-item">
+                  <div class="copy-item-header">
+                    <span>{{ item.copy_name }}</span>
+                    <span class="vip-copy" v-if="item.isVip === '是'">Vip专享</span>
+                  </div>
+                  <div class="copy-item-info">
+                    <span>共{{ item.copyList.length }}题</span
+                    ><span class="preview" @click="previewCopy(index)">预览</span>
+                  </div>
+                </div>
+                <div v-for="item in copyArr" :key="item.id" class="copy-item">
+                  <div class="copy-item-header">{{ item.copy_name }}</div>
+                  <div class="copy-item-info">
+                    <span>共{{ item.copyList.length }}题</span><span class="preview">预览</span>
+                  </div>
+                </div>
+                <div v-for="item in copyArr" :key="item.id" class="copy-item">
+                  <div class="copy-item-header">{{ item.copy_name }}</div>
+                  <div class="copy-item-info">
+                    <span>共{{ item.copyList.length }}题</span><span class="preview">预览</span>
+                  </div>
+                </div>
               </div>
             </el-scrollbar>
           </div>
+          <el-drawer v-model="drawer" :direction="direction">
+            <el-scrollbar class="copy-main">
+              <div class="form-area">
+                <!-- 问卷标题 -->
+                <div class="form-top">
+                  <div class="form-top-title">{{ copyArr[curIndex]?.copy_name }}</div>
+                  <div class="form-top-desc">请根据实际情况填写</div>
+                </div>
+                <!-- 问卷题目 -->
+                <questionOption
+                  v-for="(item, index) in copyArr[curIndex]?.copyList"
+                  :key="index"
+                  :index="index"
+                  :detail="item"
+                  :isEdit="false"
+                >
+                </questionOption>
+                <!-- 提交问卷 -->
+                <div class="submit">
+                  <el-button class="sub-btn" type="primary" @click="goCopyEdit">一键复制</el-button>
+                </div>
+              </div>
+            </el-scrollbar>
+          </el-drawer>
         </el-scrollbar>
       </el-main>
     </el-container>
@@ -55,9 +100,17 @@ import navTop from '@/components/navTop.vue'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { resultGetService } from '@/api/result'
+import { copyGetService } from '@/api/copy'
+import type { copyDataResponse, copyData } from '@/types/copy'
+import questionOption from '@/components/questionOption.vue'
+import { userInfoStore } from '@/stores'
 const router = useRouter()
 const formTitle = ref('爱吃美食调查')
+const copyArr = ref<copyData[]>([])
+const curIndex = ref<number>(0)
+const drawer = ref<boolean>(false)
+const direction = ref<string>('rtl')
+const userStore = userInfoStore()
 const goEditForm = () => {
   if (formTitle.value === '') {
     ElMessage({
@@ -68,9 +121,24 @@ const goEditForm = () => {
   }
   router.push(`/edit?title=${formTitle.value}`)
 }
+const previewCopy = (index: any) => {
+  console.log('打印index', index)
+  curIndex.value = index
+  drawer.value = true
+}
+const goCopyEdit = () => {
+  if (copyArr.value[curIndex.value].isVip === '是' && userStore.userInfo.isVip === '否') {
+    router.push('/vippay')
+    return
+  }
+  router.push(
+    `/edit?copyid=${copyArr.value[curIndex.value].id}&title=${copyArr.value[curIndex.value].copy_name}`
+  )
+}
 onMounted(async () => {
-  let res = await resultGetService({ form_id: 2 })
-  console.log('打印最终', res.data.data)
+  let res: copyDataResponse = await copyGetService()
+  console.log('打印模板问卷', res.data.data)
+  copyArr.value = res.data.data
 })
 </script>
 <style lang="scss" scoped>
@@ -79,10 +147,10 @@ onMounted(async () => {
   width: 100%;
   .el-header {
     padding: 0;
-    background-color: var(--el-bg-color);
+    background-color: var(--card-color);
     display: flex;
     height: 8vh;
-    border-bottom: 1px solid var(--el-border-color-lighter);
+    // border-bottom: 1px solid ;
   }
   .el-aside {
     height: 92vh;
@@ -94,7 +162,7 @@ onMounted(async () => {
     height: 92vh;
     width: 100%;
     .main {
-      background-color: #f7f7f7;
+      background-color: var(--bg-color);
       width: 100%;
       height: 100%;
       .start {
@@ -102,7 +170,7 @@ onMounted(async () => {
         .start-top {
           width: 100%;
           //   background-color: salmon;
-          color: black;
+          color: var(--title-color);
           font-size: 15px;
           font-weight: 600;
           display: flex;
@@ -126,7 +194,7 @@ onMounted(async () => {
 
             height: 100%;
             // background-color: salmon;
-            background-color: #fff;
+            background-color: var(--card-color);
             overflow: hidden;
             .start-middle-left-title {
               width: 100%;
@@ -134,7 +202,7 @@ onMounted(async () => {
               text-align: center;
               margin-top: 35px;
               //   background-color: #fff;
-              color: black;
+              color: var(--title-color);
               font-weight: 600;
             }
             .start-middle-left-inp {
@@ -164,13 +232,13 @@ onMounted(async () => {
           .start-middle-right {
             width: 14%;
             height: 100%;
-            background-color: #fff;
+            background-color: var(--card-color);
           }
         }
         .copy-top {
           width: 100%;
           margin-top: 30px;
-          color: black;
+          color: var(--title-color);
           font-size: 16px;
           font-weight: 600;
           display: flex;
@@ -181,7 +249,7 @@ onMounted(async () => {
           width: 100%;
           height: 240px;
           margin-top: 20px;
-          background-color: #f7f7f7;
+          background-color: var(--bg-color);
           .copy-main {
             width: 100%;
             display: flex;
@@ -190,7 +258,78 @@ onMounted(async () => {
               width: 280px;
               margin: 0px calc((100% - 4 * 280px) / 8) 8px;
               height: 110px;
-              background-color: #fff;
+              background-color: var(--card-color);
+              padding: 10px;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+
+              .copy-item-header {
+                font-size: 14px;
+                color: var(--title-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                .vip-copy {
+                  color: #f6bf83;
+                }
+              }
+              .copy-item-info {
+                font-size: 11px;
+                color: #ccc;
+                display: flex;
+                justify-content: space-between;
+                .preview {
+                  cursor: pointer;
+                }
+              }
+            }
+          }
+        }
+      }
+      .copy-main {
+        width: 100%;
+        height: 100%;
+        .form-area {
+          width: 400px;
+          min-height: 650px;
+          background-color: var(--card-color);
+          margin: 0px auto 30px;
+          padding: 10px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          .form-top {
+            width: 100%;
+            height: 90px;
+            overflow: hidden;
+            .form-top-title {
+              width: 100%;
+              text-align: center;
+              font-weight: 600;
+              color: var(--title-color);
+              font-size: 24px;
+              margin-top: 10px;
+            }
+            .form-top-desc {
+              width: 100%;
+              text-align: center;
+              color: var(--title-color);
+              font-size: 14px;
+              margin-top: 16px;
+            }
+          }
+          .submit {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: auto;
+            margin-bottom: 5px;
+            .sub-btn {
+              width: 80px;
+              height: 35px;
             }
           }
         }

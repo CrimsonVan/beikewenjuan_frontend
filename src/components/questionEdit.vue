@@ -97,7 +97,7 @@ defineExpose({
   overflow: hidden;
   padding: 20px 12px;
   .edit-name {
-    color: black;
+    color: var(--title-color);
     font-size: 15px;
     font-weight: 600;
   }
@@ -111,7 +111,7 @@ defineExpose({
     width: 100%;
     .option-name {
       overflow: hidden;
-      color: black;
+      color: var(--title-color);
       font-size: 15px;
       font-weight: 600;
       display: flex;

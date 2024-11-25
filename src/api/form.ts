@@ -1,8 +1,11 @@
 import request from '../utils/request'
-// 获取问卷接口
-export const formGetService = ({ username }: any) => request.post<any>('/form/getAll', { username })
+import type { formDataResponse } from '@/types/form'
+//获取问卷接口
+export const formGetService = ({ username }: any) =>
+  request.post<any, formDataResponse>('/form/getAll', { username })
 //获取单个问卷
-export const formGetOneService = ({ id }: any) => request.post<any>('/form/getOne', { id })
+export const formGetOneService = ({ id }: any) =>
+  request.post<any, formDataResponse>('/form/getOne', { id })
 //修改单个问卷
 export const formUpdateOneService = ({ questionList, form_name, id }: any) =>
   request.post<any>('/form/updateOne', { questionList, form_name, id })
