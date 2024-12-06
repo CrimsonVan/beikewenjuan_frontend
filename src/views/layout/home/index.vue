@@ -106,11 +106,8 @@ const goData = (id: any, status: any, form_name: any) => {
   }
 }
 const updateStatus = async (id: any, form_name: any, status: any) => {
-  let res = await formUpdateStatusService({ status: status, id: id })
-  if (res.data.message === '修改发布状态成功') {
-    console.log('修改状态成功')
-    router.push(`/data?id=${id}&form_name=${form_name}`)
-  }
+  await formUpdateStatusService({ status: status, id: id })
+  router.push(`/data?id=${id}&form_name=${form_name}`)
 }
 const goCopyEdit = (item: any) => {
   router.push(`/edit?copyid=${item.id}&title=${item.form_name}`)
@@ -119,15 +116,14 @@ const goCopyEdit = (item: any) => {
 onMounted(async () => {
   let res: formDataResponse = await formGetService({ username: userstore.userInfo.username })
   formList.value = res.data.data
-  console.log('打印问卷列表', formList.value)
 })
 </script>
 <style lang="scss" scoped>
 .all-form {
-  padding: 20px 30px 20px 100px;
+  // padding: 20px 30px 20px 100px;
+  width: 100%;
   .all-form-header {
     width: 100%;
-    // background-color: salmon;
     height: 49px;
     display: flex;
     justify-content: space-between;
@@ -156,7 +152,6 @@ onMounted(async () => {
     padding: 12px 24px;
     .form-item-top {
       width: 100%;
-      // background-color: salmon;
       height: 36px;
       border-bottom: 1px solid var(--bg-color);
       display: flex;
@@ -168,9 +163,7 @@ onMounted(async () => {
       }
       .item-top-date {
         font-size: 12px;
-        // background-color: cornsilk;
         color: var(--text-color);
-        // color: black;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -180,7 +173,6 @@ onMounted(async () => {
     .form-item-bottom {
       margin-top: 23px;
       width: 100%;
-      // background-color: salmon;
       height: 27px;
       display: flex;
       align-items: center;
@@ -234,9 +226,7 @@ onMounted(async () => {
         font-size: 12px;
         color: #6e6e6e;
         margin-left: 14px;
-        // background-color: cornsilk;
         display: flex;
-        // justify-content: space-between;
         align-items: center;
         cursor: pointer;
         .el-icon {

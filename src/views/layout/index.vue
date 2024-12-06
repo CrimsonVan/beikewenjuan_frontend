@@ -69,7 +69,7 @@ onMounted(() => {
     padding: 0;
     background-color: var(--card-color);
     display: flex;
-    height: 8vh;
+    height: 50px;
     border-bottom: 1px solid #292828;
   }
   .el-aside {
@@ -112,12 +112,13 @@ onMounted(() => {
   }
   .el-main {
     padding: 0;
-    height: 92vh;
+    height: calc(100vh - 50px);
     width: 100%;
     .main {
       background-color: var(--bg-color);
       width: 100%;
       height: 100%;
+      padding: 20px 30px 20px 100px;
     }
   }
 }

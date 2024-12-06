@@ -3,6 +3,10 @@ import type { formDataResponse } from '@/types/form'
 //获取问卷接口
 export const formGetService = ({ username }: any) =>
   request.post<any, formDataResponse>('/form/getAll', { username })
+//获取删除问卷接口
+export const formDelGetService = () => request.post<any, formDataResponse>('/form/getDelAll')
+//恢复问卷
+export const formDelUpdateService = (obj: any) => request.post<any>('/form/updateDel', obj)
 //获取单个问卷
 export const formGetOneService = ({ id }: any) =>
   request.post<any, formDataResponse>('/form/getOne', { id })
