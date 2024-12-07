@@ -52,6 +52,8 @@
               @sendIndex="(index) => openEditOption(index)"
               @sendDelIndex="(index) => deleteOption(index)"
               @sendVal="(index, val) => changeVal(index, val)"
+              @sendUpIndex="(index) => upQuestion(index)"
+              @sendDownIndex="(index) => downQuestion(index)"
             >
             </questionOption>
           </div>
@@ -90,57 +92,11 @@ const router = useRouter()
 const showChangeName = ref<boolean>(false)
 const questionEditRef = ref<any>(null)
 const compList = ref<string[]>(['文本显示', '用户输入', '用户选择'])
-// const questionList = ref([
-//   {
-//     type: '填空',
-//     title: '您的姓名',
-//     value: null
-//   },
-//   {
-//     type: '填空',
-//     title: '您的联系方式',
-//     value: null
-//   },
-//   {
-//     type: '单选题',
-//     title: '你的工作年限',
-//     options: ['应届生', '1-3年', '3-5年', '5-10年'],
-//     value: null
-//   },
-//   {
-//     type: '单选题',
-//     title: '你期望的薪资范围',
-//     options: ['小于10k', '10k-15k', '大于15k'],
-//     value: null
-//   },
-//   {
-//     type: '多选题',
-//     title: '你熟悉的技术栈',
-//     options: ['Vue2', 'Vue3', 'React', 'Jquery'],
-//     value: null
-//   },
-//   {
-//     type: '评分题',
-//     title: '你对公司的评价',
-//     value: null
-//   },
-//   {
-//     type: '日期题',
-//     title: '你的生日是',
-//     value: null
-//   },
-//   {
-//     type: '简答题',
-//     title: '备注信息',
-//     value: null
-//   }
-// ])
-//打开编辑选项区域
 const questionList = ref<questionItem[]>([])
 const form_name = ref<string>() //问卷名字
 const form_id = ref<number>() //问卷id
 const inpRef = ref<any>(null)
-const openEditOption = (index: any) => {
+const openEditOption = (index: number) => {
   questionEditRef.value.open(questionList.value[index])
 }
 //修改问卷标题
@@ -151,17 +107,33 @@ const editHeader = () => {
   })
 }
 //删除问卷问题
-const deleteOption = (index: any) => {
-  console.log('打印要删除的index', index)
+const deleteOption = (index: number) => {
   questionList.value.splice(index, 1)
 }
 //添加问卷问题
 const addOption = (val: any) => {
-  // console.log('已确认添加', val)
   questionList.value.push(val)
-  console.log('打印添加完的问卷', questionList.value)
 }
-
+//上移问题
+const upQuestion = (index: number) => {
+  if (index === 0) {
+    return
+  }
+  ;[questionList.value[index], questionList.value[index - 1]] = [
+    questionList.value[index - 1],
+    questionList.value[index]
+  ]
+}
+//下移问题
+const downQuestion = (index: number) => {
+  if (index === questionList.value.length - 1) {
+    return
+  }
+  ;[questionList.value[index], questionList.value[index + 1]] = [
+    questionList.value[index + 1],
+    questionList.value[index]
+  ]
+}
 //保存问卷
 const saveForm = async () => {
   if (route.query.id) {
@@ -205,9 +177,9 @@ onMounted(async () => {
   if (route.query.id) {
     let res: formDataResponse = await formGetOneService({ id: route.query.id })
     console.log('打印获取单个问卷', res.data.data)
-    questionList.value = res.data.data[0].questionList
-    form_name.value = res.data.data[0].form_name
-    form_id.value = res.data.data[0].id
+    questionList.value = res.data.data.results[0].questionList
+    form_name.value = res.data.data.results[0].form_name
+    form_id.value = res.data.data.results[0].id
   } else {
     if (route.query.copyid) {
       let res: copyDataResponse = await oneCopyGetService({ id: route.query.copyid })

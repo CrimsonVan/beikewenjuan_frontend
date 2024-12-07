@@ -1,4 +1,5 @@
 import type { GlobalResponseData } from './global'
+
 //问卷中每一项问题的类型
 export type questionItem = {
   type: string
@@ -6,6 +7,7 @@ export type questionItem = {
   value?: any
   options?: string[]
 }
+
 //用户信息类型
 export type formData = {
   id: number
@@ -19,5 +21,14 @@ export type formData = {
   res_count?: number
   questionList: questionItem[]
 }
-//单个用户信息返回数据类型
-export type formDataResponse = GlobalResponseData<formData[]>
+
+//问卷请求参数类型
+export type formRegQuery = {
+  idDelete: string
+  pagenum: number
+  form_name?: string
+  username: string
+}
+
+//所有问卷返回数据类型
+export type formDataResponse = GlobalResponseData<{ results: formData[]; total?: number }>

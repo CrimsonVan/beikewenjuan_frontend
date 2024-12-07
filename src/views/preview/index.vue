@@ -85,11 +85,11 @@ onMounted(async () => {
   }
   let res: formDataResponse = await formGetOneService({ id: route.query.id })
   console.log('打印获取单个问卷', res.data.data)
-  if (res.data.data[0].status === '已完成') {
+  if (res.data.data.results[0].status === '已完成') {
     isBtnBan.value = true
     isFormBan.value = true
   }
-  formDetail.value = res.data.data[0]
+  formDetail.value = res.data.data.results[0]
   console.log('打印填写问卷页面', formDetail.value)
 })
 </script>

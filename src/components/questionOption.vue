@@ -1,10 +1,12 @@
 <template>
   <!-- 问卷填空题目 -->
   <div class="question-item" v-if="detail">
+    <!-- 问题名称 -->
     <div class="ques-name">
       {{ (index as any) + 1 }}.
       {{ detail?.title }}
     </div>
+    <!-- 问题的输入框or选择框 -->
     <el-input
       v-if="detail?.type === '填空'"
       class="ques-inp"
@@ -56,129 +58,15 @@
       placeholder="Pick a Date"
       format="YYYY/MM/DD"
     />
+    <!-- 编辑 & 删除 & 上下移动 -->
     <div class="ques-hover" v-if="isEdit">
-      <el-icon><Top /></el-icon>
-      <el-icon><Bottom /></el-icon>
+      <el-icon @click="() => emit('sendUpIndex', index)"><Top /></el-icon>
+      <el-icon @click="() => emit('sendDownIndex', index)"><Bottom /></el-icon>
       <el-icon @click="() => emit('sendIndex', index)"><Edit /></el-icon>
       <el-icon @click="() => emit('sendDelIndex', index)"><Delete /></el-icon>
     </div>
     <div v-else class="ques-hover"></div>
   </div>
-
-  <!-- 问卷多行填空项目 -->
-  <!-- <div class="question-item" v-if="detail">
-    <div class="ques-name">{{ (index as any) + 1 }}.{{ detail?.title }}</div>
-
-    <el-input
-      v-if="detail?.type === '简答题'"
-      class="ques-long-inp"
-      type="textarea"
-      v-model="detail.value"
-      :autosize="{ minRows: 3, maxRows: 3 }"
-      placeholder="Please input"
-      show-word-limit
-      maxlength="110"
-    />
-
-    <div class="ques-hover" v-if="isEdit">
-      <el-icon><Top /></el-icon>
-      <el-icon><Bottom /></el-icon>
-      <el-icon @click="() => emit('sendIndex', index)"><Edit /></el-icon>
-      <el-icon @click="() => emit('sendDelIndex', index)"><Delete /></el-icon>
-    </div>
-    <div v-else class="ques-hover"></div>
-  </div> -->
-
-  <!-- 问卷单选项目 -->
-  <!-- <div class="question-item" v-if="detail">
-    <div class="ques-name">{{ (index as any) + 1 }}.{{ detail?.title }}</div>
-
-    <el-radio-group v-if="detail?.type === '单选题'" class="ques-select-one" v-model="detail.value">
-      <el-radio v-for="(option, index) in detail?.options" :key="index" :value="option">{{
-        option
-      }}</el-radio>
-    </el-radio-group>
-
-    <div class="ques-hover" v-if="isEdit">
-      <el-icon><Top /></el-icon>
-      <el-icon><Bottom /></el-icon>
-      <el-icon @click="() => emit('sendIndex', index)"><Edit /></el-icon>
-      <el-icon @click="() => emit('sendDelIndex', index)"><Delete /></el-icon>
-    </div>
-    <div v-else class="ques-hover"></div>
-  </div> -->
-
-  <!-- 问卷多选项目 -->
-  <!-- <div class="question-item" v-if="detail">
-    <div class="ques-name">{{ (index as any) + 1 }}.{{ detail?.title }}</div>
-
-    <el-checkbox-group
-      v-if="detail?.type === '多选题'"
-      class="ques-select-more"
-      v-model="detail.value"
-    >
-      <el-checkbox
-        v-for="(option, index) in detail?.options"
-        :key="index"
-        :value="option"
-        name="type"
-      >
-        {{ option }}
-      </el-checkbox>
-    </el-checkbox-group>
-
-    <div class="ques-hover" v-if="isEdit">
-      <el-icon><Top /></el-icon>
-      <el-icon><Bottom /></el-icon>
-      <el-icon @click="() => emit('sendIndex', index)"><Edit /></el-icon>
-      <el-icon @click="() => emit('sendDelIndex', index)"><Delete /></el-icon>
-    </div>
-    <div v-else class="ques-hover"></div>
-  </div> -->
-
-  <!-- 评分问题 -->
-  <!-- <div class="question-item" v-if="detail">
-    <div class="ques-name">{{ (index as any) + 1 }}.{{ detail?.title }}</div>
-
-    <el-rate
-      v-if="detail?.type === '评分题'"
-      class="ques-rate"
-      v-model="detail.value"
-      show-score
-      text-color="#333333"
-      :colors="colors"
-    />
-
-    <div class="ques-hover" v-if="isEdit">
-      <el-icon><Top /></el-icon>
-      <el-icon><Bottom /></el-icon>
-      <el-icon @click="() => emit('sendIndex', index)"><Edit /></el-icon>
-      <el-icon @click="() => emit('sendDelIndex', index)"><Delete /></el-icon>
-    </div>
-    <div v-else class="ques-hover"></div>
-  </div> -->
-
-  <!-- 日期问题 -->
-  <!-- <div class="question-item" v-if="detail">
-    <div class="ques-name">{{ (index as any) + 1 }}.{{ detail?.title }}</div>
-
-    <el-date-picker
-      v-if="detail?.type === '日期题'"
-      v-model="detail.value"
-      class="ques-date"
-      type="date"
-      placeholder="Pick a Date"
-      format="YYYY/MM/DD"
-    />
-
-    <div class="ques-hover" v-if="isEdit">
-      <el-icon><Top /></el-icon>
-      <el-icon><Bottom /></el-icon>
-      <el-icon @click="() => emit('sendIndex', index)"><Edit /></el-icon>
-      <el-icon @click="() => emit('sendDelIndex', index)"><Delete /></el-icon>
-    </div>
-    <div v-else class="ques-hover"></div>
-  </div> -->
 </template>
 <script lang="ts" setup>
 import { Edit, Delete, Top, Bottom } from '@element-plus/icons-vue'
@@ -195,7 +83,7 @@ defineProps({
     type: Boolean
   }
 })
-const emit = defineEmits(['sendIndex', 'sendDelIndex', 'sendVal'])
+const emit = defineEmits(['sendIndex', 'sendDelIndex', 'sendVal', 'sendUpIndex', 'sendDownIndex'])
 </script>
 <style lang="scss" scoped>
 .question-item {

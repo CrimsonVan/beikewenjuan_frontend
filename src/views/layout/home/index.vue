@@ -1,9 +1,11 @@
 <template>
   <!-- 我的问卷 -->
   <div class="all-form">
-    <div class="all-form-header">
-      <div class="all-form-title">问卷列表</div>
-      <el-input placeholder="请输入问卷吗进行搜索" :prefix-icon="Search" />
+    <!-- 标题 & 搜索框 -->
+    <div class="header">
+      <div class="title">问卷列表</div>
+      <el-input placeholder="请输入问卷吗进行搜索" :prefix-icon="Search" v-model="searchVal" />
+      <el-button @click="goSearch" type="primary" size="small">搜索</el-button>
     </div>
     <!-- 问卷列表 -->
     <div class="all-form-item" v-for="item in formList" :key="item.id">
@@ -73,6 +75,16 @@
         </div>
       </div>
     </div>
+    <!-- 分页 -->
+    <div style="margin-top: 20px; margin-bottom: 60px; display: flex; justify-content: flex-end">
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        v-model:current-page="currentPage"
+        @current-change="handleCurrentChange"
+        :total="total"
+      />
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -89,17 +101,27 @@ import {
   SuccessFilled
 } from '@element-plus/icons-vue'
 import { ref, onMounted } from 'vue'
-import { formGetService } from '@/api/form'
+import { formDelGetService } from '@/api/form'
 import { userInfoStore } from '@/stores'
 import { useRouter } from 'vue-router'
 import { formUpdateStatusService } from '@/api/form'
 import type { formDataResponse, formData } from '@/types/form'
+import { getTotal } from '@/utils/getTotal'
 const router = useRouter()
-const userstore = userInfoStore()
+const userStore = userInfoStore()
 const formList = ref<formData[]>([]) //问卷列表
+const currentPage = ref<number>(1) //当前页数
+const searchVal = ref<string>('') //搜索内容
+const total = ref<number>(100)
+const reqQuery = ref<{ idDelete: string; pagenum: number; form_name?: string; username: string }>({
+  pagenum: 1,
+  idDelete: '0',
+  username: userStore.userInfo.username
+}) //请求参数
 const goEdit = (id: any, form_name: any) => {
   router.push(`/edit?title=${form_name}&id=${id}`)
 }
+//取数据展示页
 const goData = (id: any, status: any, form_name: any) => {
   if (status === '已发布' || status === '已完成') {
     router.push(`/data?id=${id}&form_name=${form_name}`)
@@ -109,39 +131,54 @@ const updateStatus = async (id: any, form_name: any, status: any) => {
   await formUpdateStatusService({ status: status, id: id })
   router.push(`/data?id=${id}&form_name=${form_name}`)
 }
+//前往编辑页面
 const goCopyEdit = (item: any) => {
   router.push(`/edit?copyid=${item.id}&title=${item.form_name}`)
 }
-
-onMounted(async () => {
-  let res: formDataResponse = await formGetService({ username: userstore.userInfo.username })
-  formList.value = res.data.data
+//获取问卷列表
+const getFormList = async () => {
+  let res: formDataResponse = await formDelGetService(reqQuery.value)
+  formList.value = res.data.data.results
+  total.value = getTotal(res.data.data.total)
+}
+//页数改变操作
+const handleCurrentChange = async (val: any) => {
+  reqQuery.value.pagenum = val
+  getFormList()
+}
+//搜错
+const goSearch = async () => {
+  if (searchVal.value.trim() === '') {
+    return
+  }
+  reqQuery.value.form_name = searchVal.value.trim()
+  reqQuery.value.pagenum = 1
+  currentPage.value = 1
+  getFormList()
+}
+onMounted(() => {
+  getFormList()
 })
 </script>
 <style lang="scss" scoped>
 .all-form {
   // padding: 20px 30px 20px 100px;
   width: 100%;
-  .all-form-header {
-    width: 100%;
-    height: 49px;
+
+  .header {
+    height: 50px;
+    font-weight: 600;
+    font-size: 21px;
+    margin-bottom: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 40px;
-    .all-form-title {
-      color: var(--title-color);
-      // color: #333333;
-
-      font-weight: 600;
-      font-size: 21px;
-      display: flex;
-      align-items: center;
-      //   background-color: skyblue;
-    }
+    color: var(--title-color);
     .el-input {
-      height: 85%;
-      width: 250px;
+      height: 26px;
+      width: 220px;
+      margin-left: auto;
+      margin-right: 10px;
     }
   }
   .all-form-item {
