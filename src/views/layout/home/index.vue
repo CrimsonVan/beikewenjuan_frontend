@@ -139,7 +139,7 @@ const goCopyEdit = (item: any) => {
 const getFormList = async () => {
   let res: formDataResponse = await formDelGetService(reqQuery.value)
   formList.value = res.data.data.results
-  total.value = getTotal(res.data.data.total)
+  total.value = getTotal(res.data.data.total!)
 }
 //页数改变操作
 const handleCurrentChange = async (val: any) => {

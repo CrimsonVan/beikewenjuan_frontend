@@ -59,7 +59,7 @@
               <div class="ques">
                 <div class="ques-header">
                   <span>{{ index + 1 }}.</span>{{ item.title }}?
-                  <span style="color: #6e6e6e"> ({{ item.type }})</span>
+                  <span class="ques-header-type"> ({{ item.type }})</span>
                 </div>
                 <div class="ques-item" v-for="(i, index) in item.echartsArr" :key="index">
                   {{ getAbcd(index) }}.
@@ -255,11 +255,14 @@ onMounted(async () => {
               color: var(--text-color);
               // background-color: pink;
               margin-bottom: 15px;
+              .ques-header-type {
+                color: var(--text-color);
+              }
             }
             .ques-item {
               font-size: 17px;
               margin-bottom: 15px;
-              color: #6e6e6e;
+              color: var(--text-color);
               // font-weight: 600;
               // background-color: pink;
               padding-left: 20px;

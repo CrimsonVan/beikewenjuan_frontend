@@ -97,16 +97,16 @@ onMounted(async () => {
 .pre {
   width: 100%;
   height: 100vh;
-  background-color: #333333;
+  background-color: var(--bg-color);
   .scroll {
     width: 100%;
     height: 100%;
     .form-area {
-      width: 400px;
+      width: 420px;
       min-height: 650px;
-      background-color: #ffffff;
+      background-color: var(--card-color);
       margin: 40px auto 30px;
-      padding: 10px;
+      padding: 10px 25px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -119,7 +119,7 @@ onMounted(async () => {
         align-items: center;
         font-size: 18px;
         font-weight: 600;
-        color: #ffffff;
+        color: var(--bg-color);
       }
       .form-top {
         width: 100%;
@@ -135,7 +135,7 @@ onMounted(async () => {
         .form-top-desc {
           width: 100%;
           text-align: center;
-          color: black;
+          color: var(--text-color);
           font-size: 14px;
           margin-top: 16px;
         }

@@ -94,6 +94,7 @@ const emit = defineEmits(['sendIndex', 'sendDelIndex', 'sendVal', 'sendUpIndex',
     font-size: 15px;
     font-weight: 600;
     margin-left: 4px;
+    margin-bottom: 10px;
     // background-color: salmon;
   }
   .ques-hover {

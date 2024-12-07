@@ -2,18 +2,18 @@
     /* 夜晚 */
     /* 背景色 */
     --bg-color:#171719;
+    /* --bg-color:black;s */
+
     /* 卡片颜色 */
     --card-color:#232325;
     /* 文字颜色 */
-    --text-color:#858487;
+    /* --text-color:#858487; */
+    --text-color:#CFD3DC;
     /* 标题颜色 */
     --title-color:#fefeff;
     /* 导航active颜色 */
     --active-nav-color:#222124;
-    /* input的颜色 */
-    --el-fill-color-blank:#232325;
-    /* 表格主题颜色 */
-    --el-bg-color:#232325;
+
 
   
 

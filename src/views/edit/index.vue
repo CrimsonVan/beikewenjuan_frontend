@@ -57,8 +57,6 @@
             >
             </questionOption>
           </div>
-
-          <!-- </div> -->
         </el-scrollbar>
       </el-main>
       <!-- 右侧边 -->
@@ -235,7 +233,7 @@ onMounted(async () => {
       width: 50px;
       height: 28px;
       font-size: 13px;
-      color: #333333;
+      // color: #333333;
     }
     .pub {
       margin-left: 10px;
@@ -309,11 +307,11 @@ onMounted(async () => {
       width: 100%;
       height: 100%;
       .form-area {
-        width: 40%;
+        width: 420px;
         min-height: 650px;
         background-color: var(--card-color);
         margin: 40px auto 30px;
-        padding: 10px;
+        padding: 10px 25px;
         .form-top {
           width: 100%;
           // background-color: cornsilk;

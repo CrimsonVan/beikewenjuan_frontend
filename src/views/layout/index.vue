@@ -49,6 +49,7 @@
 import { useRouter, useRoute } from 'vue-router'
 import { onMounted, ref } from 'vue'
 import { Plus, Document, Delete, FolderOpened } from '@element-plus/icons-vue'
+// import { useDark, useToggle } from '@vueuse/core'
 import navTop from '@/components/navTop.vue'
 const router = useRouter()
 const route = useRoute()
@@ -57,6 +58,17 @@ const routeHandle = (route: any) => {
   activeRoute.value = route
   router.push(route)
 }
+
+// const isDark = useDark()
+// const toggleDark = () => {
+//   //获取html根节点，当根节点上有class=‘dark’时，变为暗黑模式
+//   let html = document.documentElement
+//   html.className = ''
+
+//   // dark.value ? (html.className = 'dark') : (html.className = '')
+
+//   // useToggle(isDark)
+// }
 onMounted(() => {
   routeHandle(route.path)
 })

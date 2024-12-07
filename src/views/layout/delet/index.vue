@@ -77,7 +77,7 @@ const handleSelectionChange = (val: any[]) => {
 const getFormList = async () => {
   let res = await formDelGetService(reqQuery.value)
   delPosts.value = res.data.data.results
-  total.value = getTotal(res.data.data.total)
+  total.value = getTotal(res.data.data.total!)
 }
 //当前页数改变
 const handleCurrentChange = async (val: any) => {
