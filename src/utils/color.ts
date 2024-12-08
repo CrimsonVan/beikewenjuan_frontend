@@ -4,9 +4,9 @@ export function initColorTheme() {
   const useStore = userInfoStore()
   const el = document.documentElement
   const html = document.documentElement
-  el.style.setProperty(`--bg-color`, useStore.isDark ? '#171719' : '#f7f7f7')
-  el.style.setProperty(`--card-color`, useStore.isDark ? '#232325' : '#ffffff')
-  el.style.setProperty(`--text-color`, useStore.isDark ? '#858487' : '#333333')
+  el.style.setProperty(`--bg-color`, useStore.isDark ? '#141414' : '#f7f7f7')
+  el.style.setProperty(`--card-color`, useStore.isDark ? '#303030' : '#ffffff')
+  el.style.setProperty(`--text-color`, useStore.isDark ? '#CFD3DC' : '#333333')
   el.style.setProperty(`--title-color`, useStore.isDark ? '#fefeff' : 'black')
   el.style.setProperty(`--active-nav-color`, useStore.isDark ? '#222124' : '#ededed')
   if (useStore.isDark) {

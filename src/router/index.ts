@@ -66,6 +66,6 @@ const router = createRouter({
 router.beforeEach((to) => {
   // 如果没有token, 且访问的是非登录页，拦截到登录，其他情况正常放行
   const useStore = userInfoStore()
-  if (!useStore.token && to.path !== '/login') return '/login'
+  if (!useStore.token && to.path !== '/login' && to.path !== '/preview') return '/login'
 })
 export default router

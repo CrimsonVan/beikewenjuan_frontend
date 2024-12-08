@@ -58,17 +58,20 @@ import { Search } from '@element-plus/icons-vue'
 import { userInfoStore } from '@/stores'
 import type { formData, formRegQuery } from '@/types/form'
 import { getTotal } from '@/utils/getTotal'
+
 const userStore = userInfoStore()
 const delPosts = ref<formData[]>([]) //问卷列表
 const selectedArr = ref<Array<number>>([]) //勾选数组
 const searchVal = ref<string>('') //搜索内容
 const currentPage = ref<number>(1) //当前页数
-const total = ref<number>(100)
+const total = ref<number>(100) //问卷总数
+
+//请求参数
 const reqQuery = ref<formRegQuery>({
   pagenum: 1,
   idDelete: '1',
   username: userStore.userInfo.username
-}) //请求参数
+})
 // 勾选操作
 const handleSelectionChange = (val: any[]) => {
   selectedArr.value = val.map((item: any) => item.id)
@@ -131,6 +134,8 @@ onMounted(() => {
     justify-content: space-between;
     align-items: center;
     background-color: var(--card-color);
+    // background-color: black;
+    // background-color: #141414;
     color: var(--title-color);
     .btn {
       margin-left: auto;
