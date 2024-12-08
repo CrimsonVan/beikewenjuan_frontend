@@ -1,7 +1,7 @@
 <template>
   <div class="pre">
     <el-scrollbar class="scroll">
-      <div class="form-area">
+      <div v-if="!isPublish" class="form-area">
         <!-- 问卷禁止填写 -->
         <div class="ban-top" v-if="isFormBan">此 问 卷 禁 止 填 写 !</div>
         <!-- 问卷标题 -->
@@ -25,6 +25,10 @@
           >
         </div>
       </div>
+      <div v-else class="published">
+        <img class="pubed_img" src="../../assets/完成.png" />
+        <p class="pubed_text">问卷提交成功</p>
+      </div>
     </el-scrollbar>
   </div>
 </template>
@@ -41,6 +45,7 @@ const route = useRoute()
 const formDetail = ref<formData>() //问卷信息
 const isBtnBan = ref<boolean>(false) //是否button禁止
 const isFormBan = ref<boolean>(false) //是否停止收集
+const isPublish = ref<boolean>(false) //是否填写完毕
 //是否完成填写
 const isFinish = () => {
   let res = formDetail.value?.questionList.some(
@@ -75,6 +80,7 @@ const submit = async () => {
     type: 'success',
     message: '提交成功'
   })
+  isPublish.value = true
 }
 onMounted(async () => {
   if (route.query.type === '预览') {
@@ -147,6 +153,24 @@ onMounted(async () => {
             width: 80px;
             height: 35px;
           }
+        }
+      }
+      .published {
+        width: 100%;
+        height: 100vh;
+        background-color: var(--bg-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .pubed_img {
+          width: 100px;
+          height: 100px;
+          margin-top: 200px;
+        }
+        .pubed_text {
+          margin-top: 14px;
+          font-size: 16px;
+          color: var(--title-color);
         }
       }
     }
