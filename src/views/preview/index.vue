@@ -158,7 +158,7 @@ onMounted(async () => {
       .published {
         width: 100%;
         height: 100vh;
-        background-color: var(--bg-color);
+        background-color: var(--card-color);
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -234,6 +234,26 @@ onMounted(async () => {
             width: 80px;
             height: 35px;
           }
+        }
+      }
+      .published {
+        width: 420px;
+        height: 650px;
+        background-color: var(--card-color);
+        margin: 40px auto 30px;
+        // background-color: var(--bg-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .pubed_img {
+          width: 100px;
+          height: 100px;
+          margin-top: 200px;
+        }
+        .pubed_text {
+          margin-top: 14px;
+          font-size: 16px;
+          color: var(--title-color);
         }
       }
     }
