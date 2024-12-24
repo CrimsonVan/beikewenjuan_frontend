@@ -107,6 +107,7 @@ import { useRouter } from 'vue-router'
 import { formUpdateStatusService } from '@/api/form'
 import type { formDataResponse, formData } from '@/types/form'
 import { getTotal } from '@/utils/getTotal'
+
 const router = useRouter()
 const userStore = userInfoStore()
 const formList = ref<formData[]>([]) //问卷列表
@@ -118,6 +119,7 @@ const reqQuery = ref<{ idDelete: string; pagenum: number; form_name?: string; us
   idDelete: '0',
   username: userStore.userInfo.username
 }) //请求参数
+
 const goEdit = (id: any, form_name: any) => {
   router.push(`/edit?title=${form_name}&id=${id}`)
 }

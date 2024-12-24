@@ -6,9 +6,6 @@
     </el-header>
 
     <el-container>
-      <!-- 侧边导航 -->
-      <el-aside width="280px"> </el-aside>
-      <!-- 主要内容 -->
       <el-main>
         <el-scrollbar class="main">
           <div class="start">
@@ -152,16 +149,12 @@ onMounted(async () => {
     height: 8vh;
     // border-bottom: 1px solid ;
   }
-  .el-aside {
-    height: 92vh;
-    background-color: #f7f7f7;
-    background-color: cornsilk;
-  }
   .el-main {
     padding: 0;
     height: 92vh;
     width: 100%;
     .main {
+      padding: 0 140px;
       background-color: var(--bg-color);
       width: 100%;
       height: 100%;
