@@ -1,5 +1,5 @@
 <template>
-  <div class="apptitle">问卷星</div>
+  <div class="apptitle">贝壳问卷</div>
   <div class="headerRight">
     <span @click="() => router.push('/vippay')" class="vip-btn">升级VIP</span>
     <el-switch
