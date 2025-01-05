@@ -49,7 +49,6 @@
 import { useRouter, useRoute } from 'vue-router'
 import { onMounted, ref } from 'vue'
 import { Plus, Document, Delete, FolderOpened } from '@element-plus/icons-vue'
-// import { useDark, useToggle } from '@vueuse/core'
 import navTop from '@/components/navTop.vue'
 const router = useRouter()
 const route = useRoute()
@@ -82,7 +81,6 @@ onMounted(() => {
     background-color: var(--card-color);
     display: flex;
     height: 50px;
-    border-bottom: 1px solid #292828;
   }
   .el-aside {
     height: 92vh;

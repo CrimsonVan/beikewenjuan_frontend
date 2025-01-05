@@ -141,8 +141,11 @@ const goCopyEdit = (item: any) => {
 const getFormList = async () => {
   let res: formDataResponse = await formDelGetService(reqQuery.value)
   formList.value = res.data.data.results
+  console.log('打印第一个问卷', formList.value)
+
   total.value = getTotal(res.data.data.total!)
 }
+
 //页数改变操作
 const handleCurrentChange = async (val: any) => {
   reqQuery.value.pagenum = val

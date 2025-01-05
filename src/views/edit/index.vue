@@ -84,6 +84,7 @@ import { userInfoStore } from '@/stores'
 import { ElMessage } from 'element-plus'
 import type { formDataResponse, questionItem } from '@/types/form'
 import type { copyDataResponse } from '@/types/copy'
+
 const userStore = userInfoStore()
 const route = useRoute()
 const router = useRouter()
@@ -178,17 +179,18 @@ onMounted(async () => {
     questionList.value = res.data.data.results[0].questionList
     form_name.value = res.data.data.results[0].form_name
     form_id.value = res.data.data.results[0].id
+  } else if (route.query.copyid) {
+    let res: copyDataResponse = await oneCopyGetService({ id: route.query.copyid })
+    console.log('打印获取单个问卷模板', res.data.data)
+    questionList.value = res.data.data[0].copyList
+    form_name.value = res.data.data[0].copy_name
+    form_id.value = res.data.data[0].id
+  } else if (route.query.aiCreatId) {
+    questionList.value = userStore.aiform.questionList
+    form_name.value = userStore.aiform.form_name
   } else {
-    if (route.query.copyid) {
-      let res: copyDataResponse = await oneCopyGetService({ id: route.query.copyid })
-      console.log('打印获取单个问卷模板', res.data.data)
-      questionList.value = res.data.data[0].copyList
-      form_name.value = res.data.data[0].copy_name
-      form_id.value = res.data.data[0].id
-    } else {
-      console.log('this is add')
-      form_name.value = route.query.title as string
-    }
+    console.log('this is add')
+    form_name.value = route.query.title as string
   }
 })
 </script>

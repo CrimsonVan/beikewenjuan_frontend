@@ -33,9 +33,7 @@ const logout = () => {
     })
     .catch(() => {})
 }
-// const colorHandle = () => {
-//   userStore.switchDark()
-// }
+
 const changeTheme = (e: any) => {
   console.log('打印e', e)
   userStore.switchDark(e)

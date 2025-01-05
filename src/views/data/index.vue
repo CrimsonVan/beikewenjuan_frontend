@@ -92,7 +92,7 @@
           </div>
         </div>
         <div class="empty" v-else>
-          <el-empty image-size="240" description="暂时没人填写问卷呢..." />
+          <el-empty image-size="240" description="暂时没人填写问卷，快分享给别人吧！" />
         </div>
         <!-- 生成海报 -->
         <el-dialog v-model="posterVisible" title="生成海报" width="350">

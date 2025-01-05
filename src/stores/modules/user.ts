@@ -29,7 +29,22 @@ export const userInfoStore = defineStore(
       isDark.value = e
       initColorTheme()
     }
+    //AI生成问卷
+    const aiform = ref<any>({
+      form_name: '',
+      questionList: []
+    })
+    //设置ai生成问卷
+    const setAiForm = (obj: {
+      form_name: string
+      questionList: { type: string; title: string; options?: string[] }[]
+    }) => {
+      aiform.value.form_name = obj.form_name
+      aiform.value.questionList = obj.questionList
+    }
     return {
+      aiform,
+      setAiForm,
       isDark,
       switchDark,
       clearToken,

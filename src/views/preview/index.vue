@@ -74,10 +74,6 @@ const submit = async () => {
     pub_time: getNowDate()
   })
 
-  ElMessage({
-    type: 'success',
-    message: '提交成功'
-  })
   isPublish.value = true
 }
 onMounted(async () => {
@@ -174,9 +170,8 @@ onMounted(async () => {
 @media screen and (min-width: 600px) {
   .pre {
     width: 100%;
-    height: 100vh;
+    overflow: hidden;
     background-color: var(--bg-color);
-
     .form-area {
       width: 420px;
       min-height: 650px;

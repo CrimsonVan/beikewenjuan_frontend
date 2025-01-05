@@ -29,7 +29,10 @@
                   >
                 </div>
               </div>
-              <div class="start-middle-right"></div>
+              <div class="start-middle-right" @click="() => (isShowAiCreate = true)">
+                <img class="ai_avatar" src="../..//assets/ai.png" alt="" />
+                <div class="ai_text">AI生成问卷</div>
+              </div>
               <div class="start-middle-right"></div>
               <div class="start-middle-right"></div>
             </div>
@@ -63,6 +66,7 @@
               </div>
             </el-scrollbar>
           </div>
+          <!-- 模板预览 -->
           <el-drawer v-model="drawer" :direction="direction">
             <el-scrollbar class="copy-main">
               <div class="form-area">
@@ -87,6 +91,29 @@
               </div>
             </el-scrollbar>
           </el-drawer>
+          <!-- ai生成问卷输入框 -->
+          <el-dialog v-model="isShowAiCreate" title="AI生成问卷" width="500">
+            <el-form
+              v-loading="aiCreateLoading"
+              element-loading-text="AI飞速生成中......"
+              :model="aiInpForm"
+              :rules="rules"
+              ref="ruleFormRef"
+            >
+              <el-form-item label="调查方向" prop="question">
+                <el-input v-model="aiInpForm.question" autocomplete="off" />
+              </el-form-item>
+              <el-form-item label="题目数量" prop="num">
+                <el-input v-model="aiInpForm.num" autocomplete="off" />
+              </el-form-item>
+            </el-form>
+            <template #footer>
+              <div class="dialog-footer">
+                <el-button @click="isShowAiCreate = false">取消</el-button>
+                <el-button type="primary" @click="aiCreateForm(ruleFormRef)">生成</el-button>
+              </div>
+            </template>
+          </el-dialog>
         </el-scrollbar>
       </el-main>
     </el-container>
@@ -94,13 +121,14 @@
 </template>
 <script lang="ts" setup>
 import navTop from '@/components/navTop.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { copyGetService } from '@/api/copy'
 import type { copyDataResponse, copyData } from '@/types/copy'
 import questionOption from '@/components/questionOption.vue'
 import { userInfoStore } from '@/stores'
+import { getWebsocketUrl, getParams } from '@/utils/aichat'
 const router = useRouter()
 const formTitle = ref('爱吃美食调查')
 const copyArr = ref<copyData[]>([])
@@ -108,6 +136,16 @@ const curIndex = ref<number>(0)
 const drawer = ref<boolean>(false)
 const direction = ref<string>('rtl')
 const userStore = userInfoStore()
+const isShowAiCreate = ref<boolean>(false)
+const aiInpForm = ref<{
+  question: string
+  num: number
+}>({
+  question: '恐怖片',
+  num: 10
+})
+const ruleFormRef = ref<any>()
+const aiCreateLoading = ref<boolean>(false)
 const goEditForm = () => {
   if (formTitle.value === '') {
     ElMessage({
@@ -131,6 +169,94 @@ const goCopyEdit = () => {
   router.push(
     `/edit?copyid=${copyArr.value[curIndex.value].id}&title=${copyArr.value[curIndex.value].copy_name}`
   )
+}
+const rules = reactive<any>({
+  question: [
+    { required: true, message: '请输入问题名称', trigger: 'blur' },
+    { min: 1, max: 15, message: '问题长度请在1至15位间' }
+  ],
+  num: [
+    { required: true, message: '请输入题目数量', trigger: 'blur' },
+    {
+      pattern: /^\d{1,2}$/,
+      message: 'num必须是数字,且不超过两位数'
+    }
+  ]
+})
+// ai生成问卷
+const aiCreateForm = async (formEl: any) => {
+  if (!formEl) return
+  formEl.validate(async (valid: any) => {
+    if (valid) {
+      aiCreateLoading.value = true
+      let msg = `生成一些有关${aiInpForm.value.question}的调查问题,问题数量为${aiInpForm.value.num}个，问题类型包含单选题,多选题,填空题三种,用json对象数组表示,其中每个对象的title属性表示问题名称,type属性表示问题类型,options属性表示单选题或多选题的选项组成的字符串数组,其中type为填空题的对象不包含options属性`
+      let myUrl = (await getWebsocketUrl()) as string
+      let socket = new WebSocket(myUrl)
+      socket.onopen = (event) => {
+        console.log('开启连接！！', event)
+        socket.send(JSON.stringify(getParams(msg)))
+        let AIreply: string
+        socket.addEventListener('message', (event) => {
+          let data = JSON.parse(event.data)
+          if (data.header.code !== 0) {
+            ElMessage.success('生成失败请重试')
+            socket.close()
+            aiCreateLoading.value = false
+          }
+          if (data.header.code === 0) {
+            if (data.payload.choices.text && data.header.status === 0) {
+              AIreply = data.payload.choices.text[0].content
+            }
+            //ai发送进行中
+            if (data.payload.choices.text && data.header.status === 1) {
+              AIreply += data.payload.choices.text[0].content
+            }
+            // 对话已经完成
+            if (data.payload.choices.text && data.header.status === 2) {
+              AIreply += data.payload.choices.text[0].content
+              let firstIndex: number = AIreply.indexOf('[')
+              let lastIndex: number = AIreply.lastIndexOf(']')
+              let questionList
+              try {
+                questionList = JSON.parse(AIreply.slice(firstIndex, lastIndex + 1))
+              } catch (err) {
+                console.log('catch到错误', err)
+                aiCreateLoading.value = false
+                ElMessage.error('生成失败，请重试')
+              }
+
+              if (questionList instanceof Array) {
+                questionList.forEach((item: any) => {
+                  if (item.type === '填空题') {
+                    item.type = '填空'
+                    delete item.options
+                  }
+                })
+                console.log('生成问卷成功', questionList)
+                userStore.setAiForm({
+                  form_name: `${aiInpForm.value.question}的调查问卷`,
+                  questionList: questionList
+                })
+                router.push('/edit?aiCreatId=1')
+              } else {
+                aiCreateLoading.value = false
+                ElMessage.success('生成失败')
+              }
+
+              setTimeout(() => {
+                AIreply = ''
+                socket.close()
+                console.log('对话关闭')
+                aiCreateLoading.value = false
+              }, 1000)
+            }
+          }
+        })
+      }
+    } else {
+      console.log('提交失败')
+    }
+  })
 }
 onMounted(async () => {
   let res: copyDataResponse = await copyGetService()
@@ -162,7 +288,6 @@ onMounted(async () => {
         padding: 20px 50px;
         .start-top {
           width: 100%;
-          //   background-color: salmon;
           color: var(--title-color);
           font-size: 15px;
           font-weight: 600;
@@ -226,13 +351,27 @@ onMounted(async () => {
             width: 14%;
             height: 100%;
             background-color: var(--card-color);
+            // background-color: cornsilk;
+            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            .ai_avatar {
+              margin-top: 105px;
+              width: 55px;
+              height: 55px;
+            }
+            .ai_text {
+              margin-top: 10px;
+            }
           }
         }
         .copy-top {
           width: 100%;
           margin-top: 30px;
           color: var(--title-color);
-          font-size: 16px;
+          font-size: 15px;
           font-weight: 600;
           display: flex;
           align-items: center;
