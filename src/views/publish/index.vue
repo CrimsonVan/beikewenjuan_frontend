@@ -272,7 +272,7 @@ onMounted(async () => {
     padding: 0;
     background-color: var(--card-color);
     display: flex;
-    height: 8vh;
+    height: 50px;
     // border-bottom: 1px solid ;
   }
   .el-main {

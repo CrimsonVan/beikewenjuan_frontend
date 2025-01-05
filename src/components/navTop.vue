@@ -1,5 +1,8 @@
 <template>
-  <div class="apptitle">贝壳问卷</div>
+  <div class="nav_logo">
+    <img class="nav_logo_img" src="../assets/创建问卷.png" alt="" />
+    <p class="nav_logo_text">贝壳问卷</p>
+  </div>
   <div class="headerRight">
     <span @click="() => router.push('/vippay')" class="vip-btn">升级VIP</span>
     <el-switch
@@ -40,16 +43,20 @@ const changeTheme = (e: any) => {
 }
 </script>
 <style lang="scss" scoped>
-.apptitle {
-  font-weight: bold;
-  font-size: 20px;
-  color: var(--title-color);
-  width: 200px;
-  height: 100%;
+.nav_logo {
   display: flex;
-  align-items: center;
-  cursor: pointer;
-  padding-left: 50px;
+  margin-left: 15px;
+  .nav_logo_img {
+    width: 38px;
+    height: 38px;
+    margin-top: 5px;
+  }
+  .nav_logo_text {
+    margin-left: 2px;
+    font-weight: 600;
+    font-size: 20px;
+    margin-top: 10px;
+  }
 }
 .headerRight {
   min-width: 275px;

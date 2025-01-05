@@ -123,17 +123,17 @@ const submitForm = (formEl: FormInstance | undefined) => {
   .logo {
     position: absolute;
     left: 25px;
-    top: 15px;
+    top: 10px;
     display: flex;
     .logo_img {
-      width: 60px;
-      height: 60px;
+      width: 50px;
+      height: 50px;
     }
     .logo_text {
       margin-left: 2px;
       font-weight: 600;
       font-size: 25px;
-      margin-top: 10px;
+      margin-top: 7px;
     }
   }
   .login-form {
