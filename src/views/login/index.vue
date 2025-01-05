@@ -1,5 +1,9 @@
 <template>
   <div class="login">
+    <div class="logo">
+      <img class="logo_img" src="../../assets/创建问卷.png" alt="" />
+      <p class="logo_text">贝壳问卷</p>
+    </div>
     <div class="login-form">
       <el-form
         ref="ruleFormRef"
@@ -115,6 +119,23 @@ const submitForm = (formEl: FormInstance | undefined) => {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  .logo {
+    position: absolute;
+    left: 25px;
+    top: 15px;
+    display: flex;
+    .logo_img {
+      width: 60px;
+      height: 60px;
+    }
+    .logo_text {
+      margin-left: 2px;
+      font-weight: 600;
+      font-size: 25px;
+      margin-top: 10px;
+    }
+  }
   .login-form {
     width: 480px;
     height: 80vh;
