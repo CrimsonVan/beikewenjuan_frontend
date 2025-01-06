@@ -27,6 +27,23 @@ const router = createRouter({
       ]
     },
     {
+      //登录成功以后展示数据的路由
+      path: '/myself',
+      component: () => import('../views/myself/index.vue'),
+      name: 'myself',
+      redirect: '/profile',
+      children: [
+        {
+          path: '/profile',
+          component: () => import('../views/myself/profile/index.vue')
+        },
+        {
+          path: '/password',
+          component: () => import('../views/myself/password/index.vue')
+        }
+      ]
+    },
+    {
       path: '/publish',
       component: () => import('../views/publish/index.vue'),
       name: 'publish'
