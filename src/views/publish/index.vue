@@ -223,6 +223,7 @@ const aiCreateForm = async (formEl: any) => {
                 console.log('catch到错误', err)
                 aiCreateLoading.value = false
                 ElMessage.error('生成失败，请重试')
+                throw 'error'
               }
 
               if (questionList instanceof Array) {
@@ -231,11 +232,11 @@ const aiCreateForm = async (formEl: any) => {
                     item.type = '填空'
                     delete item.options
                   } else if (item.type === '多选题' || item.type === '单选题') {
-                    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-                    !Object.prototype.hasOwnProperty.call(item, 'options') &&
+                    if (!Object.prototype.hasOwnProperty.call(item, 'options')) {
                       ElMessage.error('生成出错，请重试')
-                    aiCreateLoading.value = false
-                    return
+                      aiCreateLoading.value = false
+                      throw 'error'
+                    }
                   }
                 })
                 console.log('生成问卷成功', questionList)
