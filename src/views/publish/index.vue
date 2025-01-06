@@ -189,7 +189,7 @@ const aiCreateForm = async (formEl: any) => {
   formEl.validate(async (valid: any) => {
     if (valid) {
       aiCreateLoading.value = true
-      let msg = `生成一些有关${aiInpForm.value.question}的调查问题,问题数量为${aiInpForm.value.num}个，问题类型包含单选题,多选题,填空题三种,用json对象数组表示,其中每个对象的title属性表示问题名称,type属性表示问题类型,options属性表示单选题或多选题的选项组成的字符串数组,其中type为填空题的对象不包含options属性`
+      let msg = `生成一份有关${aiInpForm.value.question}的调查问卷,问题数量为${aiInpForm.value.num + 2}个，问题类型包含单选题,多选题,填空题三种,用json对象数组表示,其中每个对象要有title,type和options三个属性,title属性表示问题名称,type属性表示问题类型,options属性表示单选题或多选题的选项组成的字符串数组,其中type为填空题的对象不包含options属性`
       let myUrl = (await getWebsocketUrl()) as string
       let socket = new WebSocket(myUrl)
       socket.onopen = (event) => {
@@ -230,6 +230,12 @@ const aiCreateForm = async (formEl: any) => {
                   if (item.type === '填空题') {
                     item.type = '填空'
                     delete item.options
+                  } else if (item.type === '多选题' || item.type === '单选题') {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                    !Object.prototype.hasOwnProperty.call(item, 'options') &&
+                      ElMessage.error('生成出错，请重试')
+                    aiCreateLoading.value = false
+                    return
                   }
                 })
                 console.log('生成问卷成功', questionList)
