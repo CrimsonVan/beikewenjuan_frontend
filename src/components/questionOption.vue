@@ -1,6 +1,6 @@
 <template>
   <!-- 问卷填空题目 -->
-  <div class="question-item" v-if="detail">
+  <div ref="dom" class="question-item" v-if="detail">
     <!-- 问题名称 -->
     <div class="ques-name">
       {{ (index as any) + 1 }}.
@@ -58,6 +58,12 @@
       placeholder="Pick a Date"
       format="YYYY/MM/DD"
     />
+    <!-- 漏填或未填的提示 -->
+    <div class="ques-forget" v-if="isForget">
+      <img class="ques-forget-del" src="../assets/叉.png" alt="" /><span class="ques-forget-text"
+        >请完成这一道题目</span
+      >
+    </div>
     <!-- 编辑 & 删除 & 上下移动 -->
     <div class="ques-hover" v-if="isEdit">
       <el-icon @click="() => emit('sendUpIndex', index)"><Top /></el-icon>
@@ -72,6 +78,16 @@
 import { Edit, Delete, Top, Bottom } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 const colors = ref(['#99A9BF', '#F7BA2A', '#FF9900'])
+const isForget = ref<boolean>(false) //是否还未填写
+const dom = ref<any>()
+//修改isForget
+const setIsForget = (flag: boolean) => {
+  isForget.value = flag
+}
+//获取dom的offsetTop
+const getOffsetTop = () => {
+  return dom.value.offsetTop
+}
 defineProps({
   detail: {
     type: Object
@@ -84,6 +100,7 @@ defineProps({
   }
 })
 const emit = defineEmits(['sendIndex', 'sendDelIndex', 'sendVal', 'sendUpIndex', 'sendDownIndex'])
+defineExpose({ setIsForget, getOffsetTop })
 </script>
 <style lang="scss" scoped>
 .question-item {
@@ -145,6 +162,24 @@ const emit = defineEmits(['sendIndex', 'sendDelIndex', 'sendVal', 'sendUpIndex',
   &:hover {
     .ques-hover {
       visibility: visible;
+    }
+  }
+  .ques-forget {
+    width: 100%;
+    height: 28px;
+    background-color: #ffebed;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    margin-top: 4px;
+    .ques-forget-del {
+      width: 15px;
+      height: 15px;
+      margin-left: 5px;
+    }
+    .ques-forget-text {
+      font-size: 13px;
+      margin-left: 7px;
     }
   }
 }

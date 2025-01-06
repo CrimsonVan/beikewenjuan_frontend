@@ -15,6 +15,11 @@
         :index="index"
         :detail="item"
         :isEdit="false"
+        :ref="
+          (el: any) => {
+            domList[index] = el
+          }
+        "
       >
       </questionOption>
       <!-- 提交问卷 -->
@@ -31,11 +36,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { formGetOneService } from '@/api/form'
 import { useRoute } from 'vue-router'
 import questionOption from '@/components/questionOption.vue'
-import { ElMessage } from 'element-plus'
 import { resultAddService } from '@/api/result'
 import { getNowDate } from '@/utils/data'
 import type { formDataResponse, formData } from '@/types/form'
@@ -44,16 +48,37 @@ const formDetail = ref<formData>() //问卷信息
 const isBtnBan = ref<boolean>(false) //是否button禁止
 const isFormBan = ref<boolean>(false) //是否停止收集
 const isPublish = ref<boolean>(false) //是否填写完毕
-//是否完成填写
-const isFinish = () => {
-  let res = formDetail.value?.questionList.some(
-    (item: any) =>
+const domList = ref<any>([]) //所有问题的dom数组
+const isPub = ref<boolean>(false) //是否点击了提交
+const firstForgetTop = ref<number>(0) //第一个未填题目的offsetTop
+//判断是否完成填写，以及给出未填提示,以及确认第一个未填题目的offsetTop
+const isEmpty = () => {
+  let res: boolean = false
+  formDetail.value?.questionList.forEach((item: any, index: number) => {
+    if (
+      item.value === '' ||
+      item.value === null ||
+      item.value === undefined ||
+      item.value.length === 0
+    ) {
+      domList.value[index].setIsForget(true)
+      res = true
+    } else {
+      domList.value[index].setIsForget(false)
+    }
+  })
+  let firstForgetIndex: any = formDetail.value?.questionList.findIndex(
+    (item) =>
       item.value === '' ||
       item.value === null ||
       item.value === undefined ||
       item.value.length === 0
   )
-  if (res === true) {
+  if (firstForgetIndex !== -1) {
+    firstForgetTop.value = domList.value[firstForgetIndex].getOffsetTop()
+  }
+
+  if (res) {
     return true
   } else {
     return false
@@ -61,11 +86,10 @@ const isFinish = () => {
 }
 //提交问卷
 const submit = async () => {
-  if (isFinish()) {
-    ElMessage({
-      type: 'warning',
-      message: '还有未填题目'
-    })
+  isPub.value = true
+  if (isEmpty()) {
+    // 滚动到第一个未填题目
+    document.documentElement.scrollTop = firstForgetTop.value
     return
   }
   await resultAddService({
@@ -88,6 +112,18 @@ onMounted(async () => {
   }
   formDetail.value = res.data.data.results[0]
 })
+
+watch(
+  () => formDetail.value,
+  () => {
+    if (isPub.value) {
+      isEmpty()
+    }
+  },
+  {
+    deep: true
+  }
+)
 </script>
 <style lang="scss" scoped>
 @media screen and (min-width: 280px) {
