@@ -12,7 +12,16 @@
       v-model="userStore.isDark"
     />
     <div class="user_name">管理员</div>
-    <img class="img" :src="userStore.userInfo.avatar" alt="" />
+    <el-dropdown>
+      <img class="img" :src="userStore.userInfo.avatar" alt="" />
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item>个人资料</el-dropdown-item>
+          <el-dropdown-item>账号设置</el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
+
     <div @click="logout" class="user_name">退出</div>
   </div>
 </template>
@@ -76,7 +85,6 @@ const changeTheme = (e: any) => {
   .img {
     width: 32px;
     height: 32px;
-    overflow: hidden;
     border-radius: 50%;
   }
 }
