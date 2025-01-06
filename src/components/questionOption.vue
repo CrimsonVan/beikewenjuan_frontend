@@ -180,6 +180,7 @@ defineExpose({ setIsForget, getOffsetTop })
     .ques-forget-text {
       font-size: 13px;
       margin-left: 7px;
+      color: #333333;
     }
   }
 }
