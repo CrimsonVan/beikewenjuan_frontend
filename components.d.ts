@@ -34,6 +34,7 @@ declare module 'vue' {
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
+    ElUpload: typeof import('element-plus/es')['ElUpload']
     NavTop: typeof import('./src/components/navTop.vue')['default']
     QuestionEdit: typeof import('./src/components/questionEdit.vue')['default']
     QuestionOption: typeof import('./src/components/questionOption.vue')['default']

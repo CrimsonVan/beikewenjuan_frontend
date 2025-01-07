@@ -1,5 +1,5 @@
 <template>
-  <div class="nav_logo">
+  <div class="nav_logo" @click="() => router.push('/')">
     <img class="nav_logo_img" src="../assets/创建问卷.png" alt="" />
     <p class="nav_logo_text">贝壳问卷</p>
   </div>
@@ -11,13 +11,13 @@
       :inactive-action-icon="Sunny"
       v-model="userStore.isDark"
     />
-    <div class="user_name">管理员</div>
+    <div class="user_name">{{ userStore.userInfo.nick_name }}</div>
     <el-dropdown>
       <img class="img" :src="userStore.userInfo.avatar" alt="" />
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item>个人资料</el-dropdown-item>
-          <el-dropdown-item>账号设置</el-dropdown-item>
+          <el-dropdown-item @click="() => router.push('/profile')">个人资料</el-dropdown-item>
+          <el-dropdown-item @click="() => router.push('/password')">账号设置</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
@@ -45,7 +45,6 @@ const logout = () => {
     })
     .catch(() => {})
 }
-
 const changeTheme = (e: any) => {
   console.log('打印e', e)
   userStore.switchDark(e)
@@ -55,6 +54,7 @@ const changeTheme = (e: any) => {
 .nav_logo {
   display: flex;
   margin-left: 15px;
+  cursor: pointer;
   .nav_logo_img {
     width: 38px;
     height: 38px;
