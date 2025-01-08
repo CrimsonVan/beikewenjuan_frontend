@@ -88,7 +88,7 @@ import { Edit, CameraFilled } from '@element-plus/icons-vue'
 import { ref, nextTick } from 'vue'
 import { UploadFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import { updateUserInfoService } from '@/api/user'
+import { updateUserInfoService, updateAvatarService } from '@/api/user'
 const useStore = userInfoStore()
 const { nick_name, signature, gender } = useStore.userInfo
 const profileForm = ref<any>({ nick_name, signature, gender })
@@ -98,6 +98,7 @@ const isUpload = ref<boolean>(false)
 const curAvatar = ref<string>('')
 const domList = ref<any>([])
 const curInfoEditKey = ref<string>('')
+let formData = new FormData() //头像长传表单
 const infoList = ref<any>([
   {
     name: '用户昵称',
@@ -138,17 +139,23 @@ const saveProfileChange = async () => {
 //上传头像完回调
 const upAvatarHandle = (uploadFile: any) => {
   curAvatar.value = URL.createObjectURL(uploadFile.raw!)
+  console.log('打印file', uploadFile.raw)
+  let img = uploadFile.raw
+  formData.append('avatar', img)
+  formData.append('username', useStore.userInfo.username)
   isUpload.value = true
 }
 //重新选择上传图像，退回上一步回调
 const backUpAvatar = () => {
+  formData = new FormData()
   curAvatar.value = ''
   isUpload.value = false
 }
 //确认修改头像
-const submitAvatar = () => {
+const submitAvatar = async () => {
+  await updateAvatarService(formData)
+  useStore.getUserInfo(useStore.userInfo.username)
   dialogVisible.value = false
-  useStore.userInfo.avatar = curAvatar.value
   ElMessage.success('头像修改成功')
 }
 </script>

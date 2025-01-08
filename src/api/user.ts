@@ -20,6 +20,8 @@ export const updatePasswordService = (obj: {
   reNewPass: string
   username: string
 }) => request.post<any>('/user/updatePassword', obj)
+//updateAvatar
+export const updateAvatarService = (obj: any) => request.post<any>('/user/updateAvatar', obj)
 // 沙盒支付接口
 export const vipPayService = ({ age, totalAmount }: any) =>
   request.post<any>('/user/pay', { age, totalAmount })
