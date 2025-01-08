@@ -27,7 +27,7 @@
         <el-form-item prop="user_id">
           <el-input
             :prefix-icon="Lock"
-            v-model.number="ruleForm.user_id"
+            v-model="ruleForm.user_id"
             type="password"
             autocomplete="off"
             placeholder="请输入登录密码"
@@ -67,7 +67,7 @@ const userStore = userInfoStore()
 const router = useRouter()
 const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive({
-  user_id: '123456',
+  user_id: '654321',
   user_name: '13114209341'
 })
 
@@ -79,11 +79,8 @@ const rules = reactive<FormRules<typeof ruleForm>>({
     { min: 2, max: 11, message: '用户名长度请在2至11位间' }
   ],
   user_id: [
-    { required: true, message: '请输入用户的user_id', trigger: 'blur' },
-    {
-      pattern: /^\d{1,6}$/,
-      message: 'user_id必须是 1—6位 的数字'
-    }
+    { required: true, message: '请输入用户的密码', trigger: 'blur' },
+    { min: 6, max: 11, message: '密码请在6至11位间' }
   ]
 })
 
@@ -91,6 +88,8 @@ const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.validate(async (valid) => {
     if (valid) {
+      console.log('打印ruleform', ruleForm)
+
       let res = await userLoginService({
         username: ruleForm.user_name,
         password: ruleForm.user_id
