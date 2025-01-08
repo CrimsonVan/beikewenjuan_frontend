@@ -18,6 +18,7 @@ export const updatePasswordService = (obj: {
   oldPass: string
   newPass: string
   reNewPass: string
+  username: string
 }) => request.post<any>('/user/updatePassword', obj)
 // 沙盒支付接口
 export const vipPayService = ({ age, totalAmount }: any) =>

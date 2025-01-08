@@ -18,11 +18,19 @@
 </template>
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { updatePasswordService } from '@/api/user'
+import { userInfoStore } from '@/stores'
+import { ElMessage } from 'element-plus'
+const useStore = userInfoStore()
 const ruleFormRef = ref<any>()
-const passwordForm = ref<any>({
-  oldPass: '654321',
-  newPass: '123456',
-  reNewPass: '123456'
+const passwordForm = ref<{
+  oldPass: string
+  newPass: string
+  reNewPass: string
+}>({
+  oldPass: '',
+  newPass: '',
+  reNewPass: ''
 })
 // 原密码校验规则
 const validateOldPass = (rule: any, value: any, callback: any) => {
@@ -62,11 +70,15 @@ const rules = reactive<any>({
 // 提交表单
 const submit = (formEl: any) => {
   if (!formEl) return
-  formEl.validate((valid: any) => {
+  formEl.validate(async (valid: any) => {
     if (valid) {
-      console.log('submit成功', passwordForm.value)
-    } else {
-      console.log('submit失败')
+      await updatePasswordService({
+        username: useStore.userInfo.username,
+        oldPass: passwordForm.value.oldPass,
+        newPass: passwordForm.value.newPass,
+        reNewPass: passwordForm.value.reNewPass
+      })
+      ElMessage.success('修改密码成功')
     }
   })
 }

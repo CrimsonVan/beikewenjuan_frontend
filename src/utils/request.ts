@@ -2,7 +2,7 @@ import axios from 'axios'
 import router from '../router/index'
 import { userInfoStore } from '../stores/index'
 import { baseURL } from './config'
-
+import { ElMessage } from 'element-plus'
 const instance = axios.create({
   // TODO 1. 基础地址，超时时间
   baseURL,
@@ -41,7 +41,7 @@ instance.interceptors.response.use(
     }
     // TODO 3. 处理业务失败
     // 处理业务失败, 给错误提示，抛出错误
-    // ElMessage.error(res.data.message || '服务异常')
+    ElMessage.error(res.data.message || '服务异常')
     return Promise.reject(res.data)
   },
 
