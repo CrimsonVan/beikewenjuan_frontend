@@ -81,6 +81,7 @@ const changeTheme = (e: any) => {
   .vip-btn {
     font-size: 14px;
     color: #f6bf83;
+    visibility: hidden;
   }
   .img {
     width: 32px;

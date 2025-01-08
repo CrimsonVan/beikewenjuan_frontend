@@ -49,9 +49,7 @@
             >取消</el-button
           >
           <el-button v-if="isUpload" @click="backUpAvatar">上一步</el-button>
-          <el-button v-if="isUpload" @click="dialogVisible = false" type="primary"
-            >确认上传</el-button
-          >
+          <el-button v-if="isUpload" @click="submitAvatar" type="primary">确认上传</el-button>
         </div>
       </template>
     </el-dialog>
@@ -65,17 +63,21 @@
     <div class="profile_main_title">基本信息</div>
     <div class="profile_main_info">
       <!-- 遍历循环 -->
-      <div class="profile_main_item" v-for="item in infoList" :key="item.name">
+      <div
+        class="profile_main_item"
+        v-for="(item, index) in infoList"
+        :key="item.name"
+        :ref="(el: any) => (domList[index] = el)"
+      >
         <span>{{ item.name }}</span>
         <el-input
           v-if="hoverItem === item.alias"
           class="inp"
-          ref="inpRef"
           v-model="profileForm[item.alias]"
           @blur="saveProfileChange"
         />
         <span v-else class="profile_userinfo">{{ profileForm[item.alias] }}</span>
-        <el-icon @click="selectHoverItem(item.alias)"><Edit /></el-icon>
+        <el-icon @click="selectHoverItem(item.alias, index)"><Edit /></el-icon>
       </div>
     </div>
   </div>
@@ -85,24 +87,53 @@ import { userInfoStore } from '@/stores'
 import { Edit, CameraFilled } from '@element-plus/icons-vue'
 import { ref, nextTick } from 'vue'
 import { UploadFilled } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
+import { updateUserInfoService } from '@/api/user'
 const useStore = userInfoStore()
-const { nick_name, username } = useStore.userInfo
-const profileForm = ref<any>({ nick_name, username })
+const { nick_name, signature, gender } = useStore.userInfo
+const profileForm = ref<any>({ nick_name, signature, gender })
 const hoverItem = ref('')
-const inpRef = ref<any>(null) //输入框dom
 const dialogVisible = ref<boolean>(false)
 const isUpload = ref<boolean>(false)
 const curAvatar = ref<string>('')
+const domList = ref<any>([])
+const curInfoEditKey = ref<string>('')
+const infoList = ref<any>([
+  {
+    name: '用户昵称',
+    alias: 'nick_name'
+  },
+  {
+    name: '用户性别',
+    alias: 'gender'
+  },
+  {
+    name: '个性签名',
+    alias: 'signature'
+  }
+])
 // 选定要编辑对象
-const selectHoverItem = (name: string) => {
+const selectHoverItem = (name: string, index: number) => {
   hoverItem.value = name
+  curInfoEditKey.value = infoList.value[index].alias
+  console.log('打印所修改的key', curInfoEditKey.value)
+
   nextTick(() => {
-    inpRef.value[0].focus()
+    // 获取输入框的dom节点
+    let dom = domList.value[index].querySelector('.el-input__inner')
+    dom.focus()
   })
 }
 // blur后保存修改
-const saveProfileChange = () => {
+const saveProfileChange = async () => {
   hoverItem.value = ''
+  const query: any = {
+    username: useStore.userInfo.username
+  }
+  query[curInfoEditKey.value] = profileForm.value[curInfoEditKey.value]
+  await updateUserInfoService(query)
+  useStore.getUserInfo(useStore.userInfo.username)
+  ElMessage.success('修改用户信息成功')
 }
 //上传头像完回调
 const upAvatarHandle = (uploadFile: any) => {
@@ -114,16 +145,12 @@ const backUpAvatar = () => {
   curAvatar.value = ''
   isUpload.value = false
 }
-const infoList = ref<any>([
-  {
-    name: '用户昵称',
-    alias: 'nick_name'
-  },
-  {
-    name: '用户账号',
-    alias: 'username'
-  }
-])
+//确认修改头像
+const submitAvatar = () => {
+  dialogVisible.value = false
+  useStore.userInfo.avatar = curAvatar.value
+  ElMessage.success('头像修改成功')
+}
 </script>
 <style lang="scss">
 .profile_top {

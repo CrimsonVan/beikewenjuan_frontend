@@ -51,18 +51,6 @@
                     ><span class="preview" @click="previewCopy(index)">预览</span>
                   </div>
                 </div>
-                <div v-for="item in copyArr" :key="item.id" class="copy-item">
-                  <div class="copy-item-header">{{ item.copy_name }}</div>
-                  <div class="copy-item-info">
-                    <span>共{{ item.copyList.length }}题</span><span class="preview">预览</span>
-                  </div>
-                </div>
-                <div v-for="item in copyArr" :key="item.id" class="copy-item">
-                  <div class="copy-item-header">{{ item.copy_name }}</div>
-                  <div class="copy-item-info">
-                    <span>共{{ item.copyList.length }}题</span><span class="preview">预览</span>
-                  </div>
-                </div>
               </div>
             </el-scrollbar>
           </div>
