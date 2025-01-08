@@ -154,9 +154,13 @@ const backUpAvatar = () => {
 //确认修改头像
 const submitAvatar = async () => {
   await updateAvatarService(formData)
-  useStore.getUserInfo(useStore.userInfo.username)
+  useStore.userInfo.avatar = curAvatar.value
   dialogVisible.value = false
   ElMessage.success('头像修改成功')
+  curAvatar.value = ''
+  formData.delete('username')
+  formData.delete('avatar')
+  isUpload.value = false
 }
 </script>
 <style lang="scss">

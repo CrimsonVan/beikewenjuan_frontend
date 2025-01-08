@@ -3,6 +3,9 @@ import type { userInfoDataResponse } from '@/types/user'
 // 登录接口
 export const userLoginService = ({ username, password }: any) =>
   request.post<any>('/user/login', { username, password })
+//reg
+export const userRegisterService = ({ username, password }: any) =>
+  request.post<any>('/user/reg', { username, password })
 // 获取用户信息接口
 export const userInfoGetService = ({ username }: any) =>
   request.post<userInfoDataResponse, any>('/user/getInfo', { username })

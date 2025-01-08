@@ -4,7 +4,8 @@
       <img class="logo_img" src="../../assets/创建问卷.png" alt="" />
       <p class="logo_text">贝壳问卷</p>
     </div>
-    <div class="login-form">
+    <!-- 登录表单 -->
+    <div v-if="isLogin" class="login-form">
       <el-form
         ref="ruleFormRef"
         style="width: 400px"
@@ -35,7 +36,7 @@
         </el-form-item>
         <el-form-item>
           <div class="login-tip">
-            <span style="color: #8a8a8a">下次自动登录</span>
+            <span style="color: #8a8a8a; cursor: pointer" @click="switchPage">没账号？去注册</span>
             <span style="color: #8a8a8a">忘记密码/用户名？</span>
           </div>
         </el-form-item>
@@ -51,7 +52,57 @@
           </el-button>
         </el-form-item>
       </el-form>
-      <div class="read">我已阅读并同意问卷星 《用户服务协议》和《隐私条款》</div>
+      <div class="read">我已阅读并同意贝壳问卷 《用户服务协议》和《隐私条款》</div>
+    </div>
+    <!-- 注册表单 -->
+    <div v-else class="login-form">
+      <el-form
+        ref="ruleFormRef"
+        style="width: 400px"
+        :model="ruleForm"
+        status-icon
+        class="demo-ruleForm"
+        :rules="rules"
+      >
+        <el-form-item>
+          <div class="form_title">账 号 注 册</div>
+        </el-form-item>
+        <el-form-item prop="user_name">
+          <el-input
+            :prefix-icon="User"
+            v-model="ruleForm.user_name"
+            autocomplete="off"
+            placeholder="请输入用户名"
+          />
+        </el-form-item>
+        <el-form-item prop="user_id">
+          <el-input
+            :prefix-icon="Lock"
+            v-model="ruleForm.user_id"
+            type="password"
+            autocomplete="off"
+            placeholder="请输入登录密码"
+          />
+        </el-form-item>
+        <el-form-item>
+          <div class="login-tip">
+            <span style="color: #8a8a8a; cursor: pointer" @click="switchPage">有账号？去登陆</span>
+            <span style="color: #8a8a8a">忘记密码/用户名？</span>
+          </div>
+        </el-form-item>
+
+        <el-form-item>
+          <el-button
+            :disabled="isEmpty"
+            type="primary"
+            class="btn"
+            @click="submitForm(ruleFormRef)"
+          >
+            立即注册
+          </el-button>
+        </el-form-item>
+      </el-form>
+      <div class="read">我已阅读并同意贝壳问卷 《用户服务协议》和《隐私条款》</div>
     </div>
   </div>
 </template>
@@ -61,7 +112,7 @@ import { useRouter } from 'vue-router'
 import { reactive, computed, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
-import { userLoginService } from '../../api/user'
+import { userLoginService, userRegisterService } from '../../api/user'
 import { userInfoStore } from '@/stores'
 const userStore = userInfoStore()
 const router = useRouter()
@@ -70,7 +121,7 @@ const ruleForm = reactive({
   user_id: '654321',
   user_name: '13114209341'
 })
-
+const isLogin = ref<boolean>(true) //是否为登录页面
 const isEmpty = computed(() => !ruleForm.user_id || !ruleForm.user_name)
 
 const rules = reactive<FormRules<typeof ruleForm>>({
@@ -88,26 +139,36 @@ const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.validate(async (valid) => {
     if (valid) {
-      console.log('打印ruleform', ruleForm)
-
-      let res = await userLoginService({
-        username: ruleForm.user_name,
-        password: ruleForm.user_id
-      })
-      userStore.setToken(res.data.token)
-
-      if (res.data.message === '登录成功') {
+      if (isLogin.value) {
+        let res = await userLoginService({
+          username: ruleForm.user_name,
+          password: ruleForm.user_id
+        })
+        userStore.setToken(res.data.token)
         await userStore.getUserInfo(ruleForm.user_name)
         router.push('/')
         ElMessage({
           type: 'success',
           message: '登录成功'
         })
+      } else {
+        await userRegisterService({
+          username: ruleForm.user_name,
+          password: ruleForm.user_id
+        })
+        switchPage()
+        ElMessage.success('注册成功,请登录')
       }
     } else {
       console.log('error submit!22222222222222222')
     }
   })
+}
+
+const switchPage = () => {
+  isLogin.value = !isLogin.value
+  ruleForm.user_id = ''
+  ruleForm.user_name = ''
 }
 </script>
 <style lang="scss" scoped>
