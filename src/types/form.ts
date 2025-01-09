@@ -32,3 +32,6 @@ export type formRegQuery = {
 
 //所有问卷返回数据类型
 export type formDataResponse = GlobalResponseData<{ results: formData[]; total?: number }>
+
+//新增问卷返回数据类型
+export type formAddResponse = GlobalResponseData<{ latestFormId: number }>

@@ -154,9 +154,7 @@ const goCopyEdit = () => {
     router.push('/vippay')
     return
   }
-  router.push(
-    `/edit?copyid=${copyArr.value[curIndex.value].id}&title=${copyArr.value[curIndex.value].copy_name}`
-  )
+  router.push(`/edit?copyid=${copyArr.value[curIndex.value].id}`)
 }
 const rules = reactive<any>({
   question: [

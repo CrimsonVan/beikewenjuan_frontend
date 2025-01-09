@@ -28,13 +28,13 @@
         >
           <el-icon><Delete /></el-icon><span class="home-option-text">回收站</span>
         </div>
-        <div
+        <!-- <div
           class="home-option"
           @click="routeHandle('/folder')"
           :class="activeRoute === '/folder' ? 'active' : ''"
         >
           <el-icon><FolderOpened /></el-icon><span class="home-option-text">文件夹</span>
-        </div>
+        </div> -->
       </el-aside>
       <!-- 主要内容 -->
       <el-main>
@@ -48,7 +48,8 @@
 <script lang="ts" setup>
 import { useRouter, useRoute } from 'vue-router'
 import { onMounted, ref } from 'vue'
-import { Plus, Document, Delete, FolderOpened } from '@element-plus/icons-vue'
+//文件夹图标 FolderOpened
+import { Plus, Document, Delete } from '@element-plus/icons-vue'
 import navTop from '@/components/navTop.vue'
 const router = useRouter()
 const route = useRoute()
@@ -58,16 +59,6 @@ const routeHandle = (route: any) => {
   router.push(route)
 }
 
-// const isDark = useDark()
-// const toggleDark = () => {
-//   //获取html根节点，当根节点上有class=‘dark’时，变为暗黑模式
-//   let html = document.documentElement
-//   html.className = ''
-
-//   // dark.value ? (html.className = 'dark') : (html.className = '')
-
-//   // useToggle(isDark)
-// }
 onMounted(() => {
   routeHandle(route.path)
 })

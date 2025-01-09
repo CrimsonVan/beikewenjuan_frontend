@@ -61,8 +61,8 @@
         <div v-if="item.status === '已完成'" class="item-bottom-middle">
           <el-icon><SuccessFilled /></el-icon><span>完成</span>
         </div>
-        <div class="item-bottom-end">
-          <el-icon><DocumentCopy /></el-icon><span @click="goCopyEdit(item)">复制</span>
+        <div class="item-bottom-end" @click="goCopyEdit(item)">
+          <el-icon><DocumentCopy /></el-icon><span>复制</span>
         </div>
         <div class="item-bottom-end">
           <el-icon><Delete /></el-icon><span>删除</span>
@@ -107,7 +107,7 @@ import { useRouter } from 'vue-router'
 import { formUpdateStatusService } from '@/api/form'
 import type { formDataResponse, formData } from '@/types/form'
 import { getTotal } from '@/utils/getTotal'
-
+import { ElMessage, ElMessageBox } from 'element-plus'
 const router = useRouter()
 const userStore = userInfoStore()
 const formList = ref<formData[]>([]) //问卷列表
@@ -133,9 +133,20 @@ const updateStatus = async (id: any, form_name: any, status: any) => {
   await formUpdateStatusService({ status: status, id: id })
   router.push(`/data?id=${id}&form_name=${form_name}`)
 }
-//前往编辑页面
+//复制往期问卷
 const goCopyEdit = (item: any) => {
-  router.push(`/edit?copyid=${item.id}&title=${item.form_name}`)
+  ElMessageBox.confirm('确定要复制这份问卷吗?', 'Warning', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      ElMessage.success('复制成功')
+      router.push(`/edit?pastFormId=${item.id}`)
+    })
+    .catch(() => {
+      ElMessage.info('复制取消')
+    })
 }
 //获取问卷列表
 const getFormList = async () => {

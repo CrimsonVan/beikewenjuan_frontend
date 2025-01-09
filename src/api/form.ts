@@ -1,5 +1,5 @@
 import request from '../utils/request'
-import type { formDataResponse, formRegQuery } from '@/types/form'
+import type { formDataResponse, formRegQuery, formAddResponse } from '@/types/form'
 //获取问卷接口
 export const formGetService = ({ username }: any) =>
   request.post<any, formDataResponse>('/form/getAll', { username })
@@ -18,4 +18,4 @@ export const formUpdateOneService = ({ questionList, form_name, id }: any) =>
 export const formUpdateStatusService = ({ status, id }: any) =>
   request.post<any>('/form/updateStatus', { status, id })
 // 添加问卷接口
-export const formAddService = (obj: any) => request.post<any>('/form/add', obj)
+export const formAddService = (obj: any) => request.post<any, formAddResponse>('/form/add', obj)

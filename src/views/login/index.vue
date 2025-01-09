@@ -118,7 +118,7 @@ const userStore = userInfoStore()
 const router = useRouter()
 const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive({
-  user_id: '654321',
+  user_id: '8aunxl',
   user_name: '13114209341'
 })
 const isLogin = ref<boolean>(true) //是否为登录页面
