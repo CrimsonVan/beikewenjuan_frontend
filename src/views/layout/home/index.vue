@@ -64,7 +64,7 @@
         <div class="item-bottom-end" @click="goCopyEdit(item)">
           <el-icon><DocumentCopy /></el-icon><span>复制</span>
         </div>
-        <div class="item-bottom-end" @click="delForm(item.id)">
+        <div class="item-bottom-end" @click="delForm({ id: item.id, status: item.status })">
           <el-icon><Delete /></el-icon><span>删除</span>
         </div>
         <div class="item-bottom-end">
@@ -149,14 +149,22 @@ const goCopyEdit = (item: any) => {
     })
 }
 //删除问卷
-const delForm = (id: number) => {
-  ElMessageBox.confirm('确定要删除这份问卷吗?', 'Warning', {
+const delForm = (obj: { id: number; status: string }) => {
+  let warningText = '确定要删除这份问卷吗?'
+  let expectStatus = obj.status
+  if (obj.status === '已发布') {
+    warningText = '问卷还在收集中 确定要停止收集并删除吗?'
+    expectStatus = '已完成'
+  } else if (obj.status === '未发布') {
+    warningText = '问卷还未发布 确定要删除吗?'
+  }
+  ElMessageBox.confirm(warningText, 'Warning', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
   })
     .then(async () => {
-      await formDelService({ id })
+      await formDelService({ id: obj.id, status: expectStatus })
       getFormList()
       ElMessage.success('删除成功')
     })

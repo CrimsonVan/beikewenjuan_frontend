@@ -20,7 +20,7 @@ export const formUpdateStatusService = ({ status, id }: any) =>
 // 添加问卷接口
 export const formAddService = (obj: any) => request.post<any, formAddResponse>('/form/add', obj)
 // 删除问卷接口
-export const formDelService = (obj: { id: number }) =>
+export const formDelService = (obj: { id: number; status: string }) =>
   request.post<any, formAddResponse>('/form/del', obj)
 //delForever
 export const formDelForeverService = (obj: any) =>
