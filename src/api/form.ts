@@ -19,3 +19,9 @@ export const formUpdateStatusService = ({ status, id }: any) =>
   request.post<any>('/form/updateStatus', { status, id })
 // 添加问卷接口
 export const formAddService = (obj: any) => request.post<any, formAddResponse>('/form/add', obj)
+// 删除问卷接口
+export const formDelService = (obj: { id: number }) =>
+  request.post<any, formAddResponse>('/form/del', obj)
+//delForever
+export const formDelForeverService = (obj: any) =>
+  request.post<any, formAddResponse>('/form/delForever', obj)

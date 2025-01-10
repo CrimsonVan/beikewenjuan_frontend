@@ -64,7 +64,7 @@
         <div class="item-bottom-end" @click="goCopyEdit(item)">
           <el-icon><DocumentCopy /></el-icon><span>复制</span>
         </div>
-        <div class="item-bottom-end">
+        <div class="item-bottom-end" @click="delForm(item.id)">
           <el-icon><Delete /></el-icon><span>删除</span>
         </div>
         <div class="item-bottom-end">
@@ -104,7 +104,7 @@ import { ref, onMounted } from 'vue'
 import { formDelGetService } from '@/api/form'
 import { userInfoStore } from '@/stores'
 import { useRouter } from 'vue-router'
-import { formUpdateStatusService } from '@/api/form'
+import { formUpdateStatusService, formDelService } from '@/api/form'
 import type { formDataResponse, formData } from '@/types/form'
 import { getTotal } from '@/utils/getTotal'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -145,15 +145,30 @@ const goCopyEdit = (item: any) => {
       router.push(`/edit?pastFormId=${item.id}`)
     })
     .catch(() => {
-      ElMessage.info('复制取消')
+      ElMessage.warning('复制取消')
+    })
+}
+//删除问卷
+const delForm = (id: number) => {
+  ElMessageBox.confirm('确定要删除这份问卷吗?', 'Warning', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(async () => {
+      await formDelService({ id })
+      getFormList()
+      ElMessage.success('删除成功')
+    })
+    .catch(() => {
+      ElMessage.warning('删除取消')
     })
 }
 //获取问卷列表
 const getFormList = async () => {
   let res: formDataResponse = await formDelGetService(reqQuery.value)
   formList.value = res.data.data.results
-  console.log('打印第一个问卷', formList.value)
-
+  console.log('打印formList', formList.value)
   total.value = getTotal(res.data.data.total!)
 }
 

@@ -16,18 +16,9 @@
       <el-table-column type="selection" width="55" />
       <el-table-column property="id" label="ID" width="100" />
       <el-table-column property="form_name" label="问卷名" />
-      <el-table-column property="avatar" label="头像">
-        <template #default="scope">
-          <img
-            style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden"
-            :src="scope.row.avatar"
-            alt=""
-          />
-        </template>
-      </el-table-column>
-      <el-table-column property="nick_name" label="创立者" />
-      <el-table-column property="pub_time" label="创建时间" />
       <el-table-column property="res_count" label="问卷数量" />
+      <el-table-column property="pub_time" label="创建时间" />
+      <el-table-column property="username" label="创建者" />
       <el-table-column property="status" label="状态" />
     </el-table>
     <!-- 分页器 -->
@@ -43,17 +34,19 @@
     <!-- 底部按钮 -->
     <div class="bottom">
       <span>已选数量: {{ selectedArr.length }}</span>
-      <el-button class="btn" type="primary" :disabled="selectedArr.length === 0" @click="updateDel"
+      <el-button class="btn" type="primary" :disabled="selectedArr.length === 0" @click="renewDel"
         >恢复问卷</el-button
       >
-      <el-button type="danger" :disabled="selectedArr.length === 0">彻底删除</el-button>
+      <el-button type="danger" :disabled="selectedArr.length === 0" @click="delForeverForm"
+        >彻底删除</el-button
+      >
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
-import { formDelGetService, formDelUpdateService } from '@/api/form'
-import { ElMessage } from 'element-plus'
+import { formDelGetService, formDelUpdateService, formDelForeverService } from '@/api/form'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import { userInfoStore } from '@/stores'
 import type { formData, formRegQuery } from '@/types/form'
@@ -98,12 +91,40 @@ const goSearch = async () => {
   getFormList()
 }
 //恢复操作
-const updateDel = async () => {
-  await formDelUpdateService({
-    idArr: selectedArr.value
+const renewDel = () => {
+  ElMessageBox.confirm('确定要恢复这份问卷吗?', 'Warning', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
   })
-  ElMessage.success('恢复成功')
-  getFormList()
+    .then(async () => {
+      await formDelUpdateService({
+        idArr: selectedArr.value
+      })
+      getFormList()
+      ElMessage.success('恢复成功')
+    })
+    .catch(() => {
+      ElMessage.warning('恢复取消')
+    })
+}
+//彻底删除问卷
+const delForeverForm = () => {
+  ElMessageBox.confirm('确定要彻底删除这份问卷吗?', 'Warning', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(async () => {
+      await formDelForeverService({
+        idArr: selectedArr.value
+      })
+      getFormList()
+      ElMessage.success('彻底删除成功')
+    })
+    .catch(() => {
+      ElMessage.warning('彻底删除取消')
+    })
 }
 onMounted(() => {
   getFormList()
