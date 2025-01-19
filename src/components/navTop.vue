@@ -21,7 +21,6 @@
         </el-dropdown-menu>
       </template>
     </el-dropdown>
-
     <div @click="logout" class="user_name">退出</div>
   </div>
 </template>
@@ -46,7 +45,6 @@ const logout = () => {
     .catch(() => {})
 }
 const changeTheme = (e: any) => {
-  console.log('打印e', e)
   userStore.switchDark(e)
 }
 </script>

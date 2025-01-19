@@ -118,7 +118,7 @@ import questionOption from '@/components/questionOption.vue'
 import { userInfoStore } from '@/stores'
 import { getWebsocketUrl, getParams } from '@/utils/aichat'
 const router = useRouter()
-const formTitle = ref('爱吃美食调查')
+const formTitle = ref('')
 const copyArr = ref<copyData[]>([])
 const curIndex = ref<number>(0)
 const drawer = ref<boolean>(false)
@@ -129,7 +129,7 @@ const aiInpForm = ref<{
   question: string
   num: number
 }>({
-  question: '恐怖片',
+  question: '',
   num: 10
 })
 const ruleFormRef = ref<any>()
@@ -169,6 +169,7 @@ const rules = reactive<any>({
     }
   ]
 })
+
 // ai生成问卷
 const aiCreateForm = async (formEl: any) => {
   if (!formEl) return
@@ -216,8 +217,10 @@ const aiCreateForm = async (formEl: any) => {
                 questionList.forEach((item: any) => {
                   if (item.type === '填空题') {
                     item.type = '填空'
+                    item.title = item.title.replace(/[？]/g, '')
                     delete item.options
                   } else if (item.type === '多选题' || item.type === '单选题') {
+                    item.title = item.title.replace(/[？]/g, '')
                     if (!Object.prototype.hasOwnProperty.call(item, 'options')) {
                       ElMessage.error('生成出错，请重试')
                       aiCreateLoading.value = false
@@ -255,8 +258,11 @@ onMounted(async () => {
   let res: copyDataResponse = await copyGetService()
   console.log('打印模板问卷', res.data.data)
   copyArr.value = res.data.data
+  let str = '您通常在哪里购买冰淇淋？'
+  console.log('replace后', str.replace(/[？]/g, ''))
 })
 </script>
+
 <style lang="scss" scoped>
 .el-container-demo {
   height: 100vh;

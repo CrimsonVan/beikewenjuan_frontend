@@ -16,7 +16,7 @@ const props = defineProps({
     type: String
   }
 })
-const echartsType = ref('饼状图')
+const echartsType = ref<string>('饼状图')
 const changeType = (type: any) => {
   echartsType.value = type
   initChart()
@@ -155,12 +155,12 @@ const initChart = () => {
     circleOption.series[0].data = newData?.map((item: any) => {
       return { value: item.num, name: item.option }
     })
-    chartInstance.setOption(circleOption, true)
+    chartInstance.setOption(circleOption, 'dark', true)
   }
   if (echartsType.value === '折线图') {
     lineOption.series[0].data = newData?.map((item: any) => item.num)
     lineOption.xAxis.data = newData?.map((item: any) => item.option)
-    chartInstance.setOption(lineOption, true)
+    chartInstance.setOption(lineOption, 'dark', true)
   }
 }
 </script>
